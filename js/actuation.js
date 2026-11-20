@@ -44,7 +44,7 @@ function renderPerf() {
     sel.dataset.list = sig;
   }
   if (info.rate != null && info.rate >= 0 && info.rate < list.length) sel.value = info.rate;
-  $('acRateHint').textContent = `This keyboard supports up to ${list[0]}.`;
+  $('acRateHint').textContent = `Up to ${list[0]} on this keyboard.`;
 
   // per-key keyboard
   const counts = [0, 0, 0];

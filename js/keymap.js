@@ -45,14 +45,13 @@ function renderKeymap() {
     k.setAttribute('aria-pressed', String(code === kmSel));
   });
   $('kmLegend').textContent = !loaded ? 'Reading keymap…'
-    : kmLayer === 0 ? (changed ? `${changed} key${changed === 1 ? '' : 's'} remapped · blue keys differ from the default` : 'No keys remapped on this layer.')
+    : kmLayer === 0 ? (changed ? `${changed} key${changed === 1 ? '' : 's'} remapped · blue = changed from default` : 'No keys remapped.')
     : (() => {
-        const t = layerTriggers(kmLayer);
-        const how = t.length ? `Hold ${t.join(' or ')} to use this layer.`
-          : `No key opens this layer yet: on the base layer, set a key to “${LAYER_NAMES[kmLayer].replace(' layer', '')}” (Modifiers).`;
-        const what = changed ? `${changed} key${changed === 1 ? '' : 's'} with their own action, ▽ = same as base.` : 'Every key does the same as on the base layer (▽).';
-        return `${how} ${what}`;
+        const t = layerTriggers(kmLayer), name = LAYER_NAMES[kmLayer].replace(' layer', '');
+        const how = t.length ? `Hold ${t.join(' or ')}` : `No key opens ${name} yet: set one to ${name} on Base`;
+        return changed ? `${how} · ${changed} key${changed === 1 ? '' : 's'} set · ▽ = same as base` : `${how} · ▽ = same as base`;
       })();
+  $('kmLegend').title = $('kmLegend').textContent; // full text on hover if it is cut off
 
   renderSelection();
   renderPicker();

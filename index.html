@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/styles.css?v=3">
+<link rel="stylesheet" href="css/styles.css?v=4">
 </head>
 <body>
 <header class="topbar">
@@ -201,8 +201,9 @@
 
       <div id="kmContent" hidden>
         <div class="card" style="margin-bottom:16px">
-          <div class="card-head km-head">
-            <div><h2 id="kmLayerTitle">Base layer</h2><p id="kmLegend">Reading keymap…</p></div>
+          <div class="card-head">
+            <div class="kmh-row">
+            <h2 id="kmLayerTitle">Base layer</h2>
             <div class="km-actions">
               <div class="seg layer-seg" role="group" aria-label="Layer" id="layerSeg">
                 <button data-layer="0">Base</button>
@@ -214,6 +215,8 @@
                 <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset…
               </button>
             </div>
+            </div>
+            <p id="kmLegend" class="kmh-legend">Reading keymap…</p>
           </div>
           <div class="kb-wrap"><div class="kb-scroll"><div class="kb interactive" id="kmKb"></div></div></div>
         </div>
@@ -268,9 +271,10 @@
               <div class="card-head"><h2>Polling rate</h2><p>How often the keyboard reports to your PC.</p></div>
               <div class="card-body">
                 <div class="field-row">
-                  <div><div class="field-label">Report rate</div><div class="field-hint" id="acRateHint">Higher is faster but uses more CPU.</div></div>
+                  <div class="field-label">Report rate</div>
                   <select class="select" id="acRate" aria-label="Polling rate"></select>
                 </div>
+                <div class="field-hint" id="acRateHint" style="margin-top:8px">Higher is faster.</div>
               </div>
             </div>
             <div class="card">
@@ -362,19 +366,19 @@
 <!-- Asset version (?v=): bump it in every link on each release so browsers fetch the new files. -->
 <!-- Classic scripts (not ES modules) so the page also works when opened straight from disk.
      They share one global scope, so the order matters: protocol first, main last. -->
-<script src="js/protocol.js?v=3"></script>
-<script src="js/state.js?v=3"></script>
-<script src="js/transport.js?v=3"></script>
-<script src="js/demo.js?v=3"></script>
-<script src="js/keycodes.js?v=3"></script>
-<script src="js/keyboard.js?v=3"></script>
-<script src="js/overview.js?v=3"></script>
-<script src="js/lighting.js?v=3"></script>
-<script src="js/custom-lighting.js?v=3"></script>
-<script src="js/keymap.js?v=3"></script>
-<script src="js/actuation.js?v=3"></script>
-<script src="js/travel.js?v=3"></script>
-<script src="js/shell.js?v=3"></script>
-<script src="js/main.js?v=3"></script>
+<script src="js/protocol.js?v=4"></script>
+<script src="js/state.js?v=4"></script>
+<script src="js/transport.js?v=4"></script>
+<script src="js/demo.js?v=4"></script>
+<script src="js/keycodes.js?v=4"></script>
+<script src="js/keyboard.js?v=4"></script>
+<script src="js/overview.js?v=4"></script>
+<script src="js/lighting.js?v=4"></script>
+<script src="js/custom-lighting.js?v=4"></script>
+<script src="js/keymap.js?v=4"></script>
+<script src="js/actuation.js?v=4"></script>
+<script src="js/travel.js?v=4"></script>
+<script src="js/shell.js?v=4"></script>
+<script src="js/main.js?v=4"></script>
 </body>
 </html>
