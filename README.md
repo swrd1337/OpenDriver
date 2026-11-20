@@ -47,6 +47,7 @@ Add `?demo` to the address to use a simulated keyboard.
 
 ```
 index.html            page markup
+favicon.svg           site icon
 css/styles.css        all styles (shadcn/ui-style zinc tokens, light + dark)
 js/
   protocol.js         packet format, command numbers, packet builders (no DOM)

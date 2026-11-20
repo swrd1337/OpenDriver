@@ -78,7 +78,13 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .nav-item[aria-current="page"] { background: var(--secondary); color: var(--foreground); }
 .nav-item:disabled { cursor: default; opacity: .55; }
 .nav-item .soon { margin-left: auto; }
-.sidebar-foot { margin-top: auto; padding: 12px 10px 0; font-size: 12px; color: var(--muted-fg); border-top: 1px solid var(--border); }
+.sidebar-foot { margin-top: auto; padding: 12px 10px 0; font-size: 12px; color: var(--muted-fg); border-top: 1px solid var(--border); display: grid; gap: 4px; }
+.sidebar-foot a { color: var(--foreground); text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .2s; }
+.sidebar-foot a:hover { background-size: 100% 1px; }
+.foot-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; justify-self: start; }
+.foot-note { margin-top: 4px; }
+svg.gh { width: 16px; height: 16px; flex: none; }
+.sidebar-foot svg.gh { width: 14px; height: 14px; }
 main { padding: 32px; max-width: 1080px; width: 100%; min-width: 0; }
 .page { display: none; }
 .page.active { display: block; animation: pageIn .2s ease-out; }
