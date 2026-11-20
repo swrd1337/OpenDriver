@@ -18,7 +18,7 @@ Nothing to install: it runs in Chrome or Edge and talks to the keyboard directly
 | **Custom lighting** | Paint every key its own color: click or drag, color picker and swatches, presets (fill, WASD + arrows, rainbow, off), undo |
 | **Keymap** | Remap any key on the Base, Fn, Fn2 and Fn3 layers: letters, modifiers, F-keys, media, mouse, lighting and system keys; reset the base layer or factory-reset |
 | **Actuation** | Global actuation point and deadzones, polling rate, per-key Global / Fixed / Rapid trigger, live key travel test with a depth gauge and chart |
-| **Mouse** | Zaopin Z2 / Z4D: DPI stages (count, values, active stage, remove any stage but the first), polling rate, lift-off distance |
+| **Mouse** | Zaopin Z2 / Z4D: DPI stages (count, values, colors, active stage, remove any stage but the first), button remapping, polling rate, lift-off distance, debounce, motion sync, sleep time, battery level; reconnects automatically |
 | **Console** | Every packet sent and received, for debugging and protocol work |
 
 Light and dark themes, works on narrow screens, respects "reduce motion".

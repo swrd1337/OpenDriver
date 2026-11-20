@@ -77,15 +77,22 @@ demoKeymap[0].set(57, 41); // demo: Caps Lock -> Esc, so there is something to r
 let demoMsFlash = null; // built on first use: dpiEncode lives in mouse.js, which loads later
 function demoMsInit() {
   demoMsFlash = new Uint8Array(256).fill(255);
-  [[0, 1], [2, 6], [4, 1], [10, 1]].forEach(([a, v]) => demoMsFlash.set([v, 85 - v & 255], a)); // 1000 Hz, 6 stages, stage 2, 1 mm
+  // 1000 Hz, 6 stages, stage 2 active, 1 mm lift-off, 8 ms debounce, motion sync on, sleep after 1 min
+  [[0, 1], [2, 6], [4, 1], [10, 1], [169, 8], [171, 1], [173, 6]].forEach(([a, v]) => demoMsFlash.set(msPair(v), a));
   [400, 800, 1600, 2400, 3200, 6400, 800, 800].forEach((d, i) => demoMsFlash.set(dpiEncode(d), 12 + i * 4));
+  [[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [255, 128, 0], [0, 255, 255], [255, 0, 255], [255, 255, 255]]
+    .forEach((c, i) => demoMsFlash.set(msRecord(c), 44 + i * 4));
+  [[1, 0x100], [1, 0x200], [1, 0x400], [1, 0x800], [1, 0x1000], [2, 0x100]] // cfg.json defaults
+    .forEach(([t, p], i) => demoMsFlash.set(msRecord([t, p >> 8, p & 255]), 96 + i * 4));
 }
 function msDemoReply(p) {
   if (!demoMsFlash) demoMsInit();
   const r = p.slice(); r[1] = 0;
+  const addr = p[2] << 8 | p[3];
   if (p[0] === MS_CMD.HANDSHAKE) { r[9] = 7; r[10] = 4; r[11] = 1; }
   else if (p[0] === MS_CMD.ONLINE) r[5] = 1;
-  else if (p[0] === MS_CMD.READ) r.set(demoMsFlash.slice(p[2] << 8 | p[3], (p[2] << 8 | p[3]) + p[4]), 5);
-  else if (p[0] === MS_CMD.WRITE) demoMsFlash.set(p.slice(5, 5 + p[4]), p[2] << 8 | p[3]);
+  else if (p[0] === MS_CMD.BATTERY) { r[5] = 76; r[6] = 0; }
+  else if (p[0] === MS_CMD.READ) r.set(demoMsFlash.slice(addr, addr + p[4]), 5);
+  else if (p[0] === MS_CMD.WRITE) demoMsFlash.set(p.slice(5, 5 + p[4]), addr);
   setTimeout(() => msHandle(r), 5);
 }

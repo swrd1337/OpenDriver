@@ -257,7 +257,7 @@ select.select {
 .ck-actions, .ck-presets { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .ck-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .ck-tools .spacer { flex: 1; }
-.ck-tools input[type=color] { width: 40px; height: 32px; border: 1px solid var(--input); border-radius: 7px; padding: 2px; background: var(--background); cursor: pointer; }
+.ck-tools input[type=color], input.ms-color { width: 40px; height: 32px; border: 1px solid var(--input); border-radius: 7px; padding: 2px; background: var(--background); cursor: pointer; }
 .ck-swatches { display: flex; gap: 6px; }
 .ck-sw { width: 24px; height: 24px; padding: 0; border-radius: 6px; border: 1px solid var(--border); background: var(--sw); cursor: pointer; transition: transform .12s, box-shadow .15s; }
 .ck-sw:hover { transform: translateY(-2px); }

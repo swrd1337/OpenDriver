@@ -49,7 +49,7 @@ async function openDevice(d, { silent = false } = {}) {
   } catch (e) {
     // silent (automatic) attempts stay quiet unless the device is busy, which the user can fix
     if (!silent || /open/i.test(e.message))
-      toast('Could not connect', /open/i.test(e.message) ? 'The device is busy. Close the Ajazz web driver and try again.' : e.message, true);
+      toast('Could not connect', /open/i.test(e.message) ? 'The browser could not open the keyboard. Close the Ajazz web driver; on Linux, add the udev rule from the README.' : e.message, true);
   } finally { opening = false; }
 }
 
@@ -91,3 +91,4 @@ renderInfo();
 renderKeymap();
 renderLog();
 reconnect();
+msReconnect();
