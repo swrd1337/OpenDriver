@@ -410,3 +410,26 @@ select.select {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* mouse */
+.ms-extra { display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap; margin-top: 8px; }
+.sc-mods { display: flex; gap: 16px; flex-wrap: wrap; }
+.sc-mod { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.sc-mod input { accent-color: var(--foreground); }
+.dialog-wide { width: min(620px, calc(100vw - 32px)); }
+.mc-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 16px 0 10px; }
+.mc-list { display: grid; gap: 6px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
+.mc-row { display: grid; grid-template-columns: 1fr 96px auto auto; gap: 8px; align-items: center; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; }
+.mc-row .input { height: 30px; }
+#mcRecord[aria-pressed="true"] { background: var(--destructive); color: #fff; border-color: transparent; }
+.ms-dpi-row { flex-wrap: wrap; row-gap: 8px; }
+.ms-dpi-edit { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+.ms-dpi-edit .input { min-width: 76px; }
+input.ms-color { flex: none; }
+/* topbar on phones: the status shortens, Connect shows only its icon */
+#statusBadge { min-width: 0; }
+#statusText { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 480px) {
+  #connectBtn span { display: none; }
+  .topbar { gap: 8px; }
+}

@@ -13,11 +13,12 @@ Hosted on GitHub Pages from the repository root.
 
 ```
 protocol → state → transport → demo → keycodes → keyboard → overview → lighting
-→ custom-lighting → keymap → actuation → travel → mouse → shell → main
+→ custom-lighting → keymap → actuation → travel → mouse → mouse-buttons → mouse-lighting
+→ backup → shell → main
 ```
 
 - They are **classic scripts, not ES modules**, so the page works from `file://` (users open it straight from disk). Don't switch to `type="module"` or `import`/`export`.
-- Classic scripts share one global scope. Top-level `const`/`let`/`function` in one file are visible to the files after it.
+- Classic scripts share one global scope. Top-level `const`/`let`/`function` in one file are visible to the files after it. A name declared twice breaks the whole later file at load (`Identifier … has already been declared`), so mouse code prefixes its globals with `ms`.
 - Code that runs **at load time** may only use things from earlier files. Code inside functions and event handlers can use anything, because everything is loaded by the time it runs.
 - `main.js` is last and does start-up rendering.
 
@@ -30,7 +31,8 @@ There is no test runner. Test in a browser:
 1. Serve the folder: `python -m http.server 8000`, then open `http://localhost:8000/?demo`.
 2. `?demo` swaps WebHID for a simulated keyboard (`js/demo.js`) that answers every command OpenDriver sends: keymap, colors, actuation, live travel.
 3. Click **Connect keyboard**, then go through the page you changed, check the **Console** page for the packets, and check the browser console for errors.
-4. When you add a new command, teach `demoReply()` in `js/demo.js` to answer it, so the feature can be tested without hardware.
+4. When you add a new command, teach `demoReply()` (keyboard) or `msDemoReply()` (mouse) in `js/demo.js` to answer it, so the feature can be tested without hardware.
+5. After touching mouse record code, run `node tools/check-mouse.js`: it compares the encoders with the official driver's builders, byte for byte.
 
 Hardware testing is done by the maintainer. Ask for the packet log (Console → **Copy log**) rather than guessing what the keyboard did.
 

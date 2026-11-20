@@ -18,8 +18,9 @@ Nothing to install: it runs in Chrome or Edge and talks to the keyboard directly
 | **Custom lighting** | Paint every key its own color: click or drag, color picker and swatches, presets (fill, WASD + arrows, rainbow, off), undo |
 | **Keymap** | Remap any key on the Base, Fn, Fn2 and Fn3 layers: letters, modifiers, F-keys, media, mouse, lighting and system keys; reset the base layer or factory-reset |
 | **Actuation** | Global actuation point and deadzones, polling rate, per-key Global / Fixed / Rapid trigger, live key travel test with a depth gauge and chart |
-| **Mouse** | Zaopin Z2 / Z4D: DPI stages (count, values, colors, active stage, remove any stage but the first), button remapping, polling rate, lift-off distance, debounce, motion sync, sleep time, battery level; reconnects automatically |
-| **Console** | Every packet sent and received, for debugging and protocol work |
+| **Mouse** | Zaopin Z2 / Z4D: DPI stages (count, values, separate X / Y where supported, colors, active stage, remove any stage but the first); buttons (clicks, scroll, DPI, fire key, DPI lock, media keys, shortcuts, recorded macros); polling rate, lift-off, debounce, motion sync, angle snapping, ripple control, sleep time; lighting and DPI indicator; battery level; restore defaults per section; reconnects automatically |
+| **Console** | Every packet sent and received by the keyboard and the mouse, filterable per device, for debugging and protocol work |
+| **Backup** | Export the keyboard's or the mouse's settings to a JSON file and import them again (Overview → Device information, Mouse → Export / Import). Imported files are checked before anything is written. |
 
 Light and dark themes, works on narrow screens, respects "reduce motion".
 
@@ -73,11 +74,15 @@ js/
   keymap.js           Keymap page, layers, reset dialog
   actuation.js        Actuation page
   travel.js           live key travel test
-  mouse.js            Mouse page: Zaopin Z2 / Z4D protocol and UI
+  mouse.js            Mouse page: Zaopin Z2 / Z4D protocol, transport and core settings
+  mouse-buttons.js    mouse button actions, shortcuts, media keys and the macro editor
+  mouse-lighting.js   mouse light effect and DPI indicator
+  backup.js           settings export / import (both devices), mouse restore defaults
   shell.js            console, toasts, navigation, theme
   main.js             connect / disconnect and start-up (loaded last)
 docs/PROTOCOL.md      the keyboard's HID protocol, as far as it is known
 docs/MOUSE-PROTOCOL.md  the Zaopin (CompX) mouse protocol
+tools/check-mouse.js  checks the mouse record encoders (node tools/check-mouse.js)
 ```
 
 The scripts are plain classic scripts loaded in that order (no bundler, no ES modules), so the page also works from `file://`.

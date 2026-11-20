@@ -4,20 +4,30 @@
 /* =========================================================
    Console, toasts, navigation, theme
    ========================================================= */
-function addLog(dir, bytes) {
-  logRows.push({ t: new Date().toLocaleTimeString([], { hour12: false }), dir, h: hex(bytes) });
-  if (logRows.length > 500) logRows.shift();
+let logFilter = 'all'; // all | kb | ms
+function addLog(dir, bytes, src = 'kb') {
+  logRows.push({ t: new Date().toLocaleTimeString([], { hour12: false }), dir, src, h: hex(bytes) });
+  if (logRows.length > 3000) logRows.shift(); // room for both devices: one mouse read is ~40 packets
   if ($('page-console').classList.contains('active')) renderLog();
 }
+const shownRows = () => logFilter === 'all' ? logRows : logRows.filter(r => r.src === logFilter);
+const SRC_LABEL = { kb: 'KB', ms: 'MS' };
 function renderLog() {
-  $('logCount').textContent = `${logRows.length} packet${logRows.length === 1 ? '' : 's'}`;
-  $('log').innerHTML = logRows.length
-    ? logRows.slice().reverse().map(r => `<div class="log-row"><span class="t">${r.t}</span><span class="d ${r.dir}">${r.dir.toUpperCase()}</span><span class="h">${r.h}</span></div>`).join('')
-    : '<div class="empty-note" style="margin:20px">No traffic yet. Connect the keyboard to see packets here.</div>';
+  const rows = shownRows();
+  $('logCount').textContent = `${rows.length} packet${rows.length === 1 ? '' : 's'}`;
+  $('log').innerHTML = rows.length
+    ? rows.slice().reverse().map(r => `<div class="log-row"><span class="t">${r.t}</span><span class="d ${r.dir}">${SRC_LABEL[r.src]} ${r.dir.toUpperCase()}</span><span class="h">${r.h}</span></div>`).join('')
+    : '<div class="empty-note" style="margin:20px">No traffic yet. Connect the keyboard or the mouse to see packets here.</div>';
 }
+document.querySelectorAll('#logFilter button').forEach(b => b.onclick = () => {
+  logFilter = b.dataset.src;
+  document.querySelectorAll('#logFilter button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  renderLog();
+});
 $('clearLog').onclick = () => { logRows.length = 0; renderLog(); };
 $('copyLog').onclick = async () => {
-  try { await navigator.clipboard.writeText(logRows.map(r => `${r.t} ${r.dir.toUpperCase()} ${r.h}`).join('\n')); toast('Log copied', `${logRows.length} packets on the clipboard.`); }
+  const rows = shownRows();
+  try { await navigator.clipboard.writeText(rows.map(r => `${r.t} ${SRC_LABEL[r.src]} ${r.dir.toUpperCase()} ${r.h}`).join('\n')); toast('Log copied', `${rows.length} packets on the clipboard.`); }
   catch { toast('Could not copy', 'Clipboard access was blocked.', true); }
 };
 

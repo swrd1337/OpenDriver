@@ -4,6 +4,14 @@
 /* =========================================================
    Connection and start-up
    ========================================================= */
+// One badge for both devices: keyboard state (from setConnected) plus the mouse.
+let kbStatus = 'Disconnected';
+function updateStatus() {
+  const kb = connected, m = !!ms;
+  $('statusBadge').className = 'badge' + (kb || m ? (demo ? ' demo' : ' live') : '');
+  const kbName = demo ? 'Demo keyboard' : 'Keyboard';
+  $('statusText').textContent = kb && m ? `${kbName} + mouse` : kb ? `${kbName} connected` : m ? (demo ? 'Demo mouse connected' : 'Mouse connected') : kbStatus;
+}
 function setConnected(state, label) {
   connected = state;
   if (!state) {
@@ -14,11 +22,13 @@ function setConnected(state, label) {
     setTravelRunning(false);
     renderInfo(); renderLighting(); refreshKeyboards(true); $('kbLegend').textContent = '—';
   }
-  $('statusBadge').className = 'badge' + (state ? (demo ? ' demo' : ' live') : '');
-  $('statusText').textContent = label;
+  kbStatus = label;
+  updateStatus();
   $('emptyState').hidden = state; $('overviewContent').hidden = !state;
   $('refreshBtn').disabled = !state;
-  $('connectBtn').querySelector('span').textContent = state ? 'Disconnect' : 'Connect keyboard';
+  const btnText = state ? 'Disconnect' : 'Connect keyboard';
+  $('connectBtn').querySelector('span').textContent = btnText;
+  $('connectBtn').setAttribute('aria-label', btnText); // the text is hidden on phones
   $('connectBtn').className = 'btn btn-sm ' + (state ? 'btn-outline' : 'btn-primary');
   renderKeymap(); renderPerf();
 }

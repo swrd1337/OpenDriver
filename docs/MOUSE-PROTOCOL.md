@@ -54,14 +54,25 @@ Single-byte settings are stored as a pair `[value, 0x55 - value]`.
 | `4` | Active DPI stage | 0-based index |
 | `10` | Lift-off distance | 1 = 1 mm, 2 = 2 mm; PAW3950 also 3 = 0.7 mm |
 | `12 + 4·i` | DPI stage *i* (0–7) | see below |
+| `76` | DPI indicator effect | 0 off, 1 steady, 2 breathing (turning on also writes `82` = 1) |
+| `78` | DPI indicator brightness | levels 1–10 stored as 16, 30, 60, 90, 128, 150, 180, 210, 230, 255 |
+| `80` | DPI indicator speed | 1–5 |
+| `82` | DPI indicator on | 0 / 1 (off = only this is written) |
 | `44 + 4·i` | DPI stage color | `[r, g, b, check]`, check = `(0x55 - r - g - b) & 0xFF` |
 | `96 + 4·i` | Button *i* action | `[type, param high, param low, check]`, see below |
+| `160` | Light effect record | `[mode, r, g, b, speed 0–9, brightness 0–9, check]`; modes 1 rainbow, 2 single color breathing, 3 fixed color, 4 neon, 5 rainbow breathing, 6 fixed rainbow |
+| `167` | Light on | 0 / 1; "Off" only clears this, any other mode sets it and rewrites `160` |
 | `169` | Debounce | 0–15 ms (official default 8; it warns below 8) |
 | `171` | Motion sync | 0 = off, 1 = on |
 | `173` | Sleep time | 10 s units: 1, 3, 6, 12, 18, 30, 60, 90 (10 s – 15 min) |
+| `175` | Angle snapping | 0 / 1 |
+| `177` | Ripple control | 0 / 1 |
+| `179` | Light off while moving | 0 / 1 |
+| `256 + 32·i` | Shortcut / media slot for button *i* | see below |
+| `768 + 384·i` | Macro slot for button *i* | see below |
 
-Further addresses (angle snapping, ripple control, lighting, shortcut keys at `256`, macros at `768`…) are listed in the driver's `K` table; OpenDriver doesn't touch them.
-OpenDriver reads `0..176` on connect.
+Further addresses (sensor mode, wheel settings, 3955 DPI table at `6912`…) are listed in the driver's `K` table; OpenDriver doesn't touch them.
+OpenDriver reads `0..181` on connect, then the shortcut or macro slot of each button that uses one.
 
 ### DPI stage (PAW3395 / PAW3950)
 
@@ -71,6 +82,8 @@ OpenDriver reads `0..176` on connect.
 [ v & 0xFF,  v & 0xFF,  (h << 2) | (h << 6),  (0x55 - sum of the first 3) & 0xFF ]
   X low      Y low      X / Y high bits          check
 ```
+
+Separate X / Y values (the driver shows this on PAW3950 models 14–16): byte 0 and the bits 2–3 / bit 0–1 belong to X, byte 1 and bits 6–7 / 4–5 to Y.
 
 Range flags in byte 2: bit 0 doubles the X value, bit 1 doubles it again (bits 4 and 5: Y). The driver ORs in a per-range `DPIex` value from `sensor.json`.
 For 3395/3950 that's only the extended range above the sensor maximum, which OpenDriver doesn't offer.
@@ -114,6 +127,35 @@ Defaults: `1:0x0100`, `1:0x0200`, `1:0x0400`, `1:0x0800`, `1:0x1000`, `2:0x0100`
 | `3` | Horizontal scroll | `0x0100` left, `0x0200` right |
 | `0x0B` | Vertical scroll | `0x0100` up, `0x0200` down |
 | `7` | Polling rate switch | 0 |
-| `4`, `5`, `6`, `8`, `0x0A` | Fire key, shortcut / media, macro, light toggle, DPI lock | not offered by OpenDriver; shown as "Other" |
+| `4` | Fire key | `interval << 8 \| clicks`: interval 10–255 ms, clicks 0–3 (0 = while held); driver default 10 ms × 3 |
+| `5` | Shortcut or media key | 0; the keys are in the button's shortcut slot |
+| `6` | Macro | `button << 8 \| repeat`: repeat 1–250 times, 254 until released, 253 until pressed again, 255 until any button |
+| `8` | Light toggle | `0x0000` all lights, `0x0100` DPI indicator, `0x0300` light strip, `0x0400` cycle strip effects |
+| `0x0A` | DPI lock | the DPI's stored value (as in a DPI stage), **low byte first** |
 
-The official driver refuses to change the last button that does Left click; OpenDriver does the same.
+### Shortcut and media slot (`256 + 32·i`)
+
+```
+[count = 2 × keys, presses: (type | 0x80, value low, value high)…, releases in reverse order: (type | 0x40, …)…, check]
+```
+
+Up to 5 keys fit the 32-byte slot. Event types: 0 = modifier (bit mask: 1 Ctrl, 2 Shift, 4 Alt, 8 Win, ×16 for the right-hand ones), 1 = key (HID usage), 2 = consumer usage (media).
+A media key is a one-key shortcut of type 2, e.g. volume up: `02 82 E9 00 42 E9 00 check`.
+
+### Macro slot (`768 + 384·i`)
+
+```
+[name length (1–30), UTF-8 name, 0xFF padding up to byte 30, event count (≤ 70), events…, check]
+event = [(0x80 press | 0x40 release) | type, value low, value high, delay high, delay low]   (delay in ms, big-endian)
+check = (0x55 - sum of the event bytes - count) & 0xFF
+```
+
+Event types as above, plus 4 = mouse button (1 left, 2 right, 4 wheel, 8 back, 16 forward).
+A slot whose name length isn't 1–30 or whose count is over 70 is treated as empty, like the driver does.
+
+The official driver refuses to change the last button that does Left click; OpenDriver does the same, also for imported backups.
+When a button needs a slot, OpenDriver writes the slot first and the button record second, so the button never points at stale data.
+
+## Checking the encoders
+
+`node tools/check-mouse.js` compares every record builder in `js/mouse.js` and `js/mouse-buttons.js` with re-typed copies of the driver's own functions (all DPI values of each sensor, X/Y, colors, buttons, media, shortcuts, macros, packet splitting and checksums).

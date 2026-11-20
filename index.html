@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/styles.css?v=7">
+<link rel="stylesheet" href="css/styles.css?v=8">
 </head>
 <body>
 <header class="topbar">
@@ -28,7 +28,7 @@
   <button class="btn btn-outline btn-sm hide-sm" id="refreshBtn" disabled>
     <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Re-read
   </button>
-  <button class="btn btn-primary btn-sm" id="connectBtn">
+  <button class="btn btn-primary btn-sm" id="connectBtn" aria-label="Connect keyboard">
     <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M12 18v4"/></svg><span>Connect keyboard</span>
   </button>
 </header>
@@ -96,7 +96,7 @@
         </div>
 
         <div class="card">
-          <div class="card-head"><h2>Device information</h2><p>Reported by the keyboard during sync.</p></div>
+          <div class="card-head km-head"><div><h2>Device information</h2><p>Reported by the keyboard during sync.</p></div><div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" id="kbExport">Export settings</button><button class="btn btn-outline btn-sm" id="kbImport">Import settings</button></div></div>
           <div class="card-body"><dl class="kv" id="info"></dl></div>
         </div>
       </div>
@@ -351,13 +351,30 @@
             <div class="card ms-online">
               <div class="card-head km-head">
                 <div><h2>DPI stages</h2><p id="msDpiHint"></p></div>
-                <div class="field-row" style="gap:8px"><label class="field-label" for="msStages">Stages</label><select class="select" id="msStages"></select></div>
+                <div class="field-row" style="gap:8px"><label class="field-label" for="msStages">Stages</label><select class="select" id="msStages"></select><button class="btn btn-ghost btn-sm" data-ms-defaults="dpi" aria-label="Restore default DPI stages">Defaults</button></div>
               </div>
               <div class="card-body" style="display:grid;gap:10px" id="msDpis"></div>
             </div>
             <div class="card ms-online">
-              <div class="card-head"><h2>Buttons</h2><p>What each button does. At least one button must stay on Left click.</p></div>
-              <div class="card-body" style="display:grid;gap:10px" id="msKeys"></div>
+              <div class="card-head km-head"><div><h2>Buttons</h2><p>What each button does. At least one button must stay on Left click.</p></div><button class="btn btn-ghost btn-sm" data-ms-defaults="buttons" aria-label="Restore default buttons">Defaults</button></div>
+              <div class="card-body" style="display:grid;gap:14px" id="msKeys"></div>
+            </div>
+            <div class="card ms-online">
+              <div class="card-head km-head"><div><h2>Lighting</h2><p>The mouse's decorative light and its DPI indicator.</p></div><button class="btn btn-ghost btn-sm" data-ms-defaults="lighting" aria-label="Restore default lighting">Defaults</button></div>
+              <div class="card-body" style="display:grid;gap:16px">
+                <div class="field-row"><label class="field-label" for="msLightMode">Light effect</label><select class="select" id="msLightMode"></select></div>
+                <div class="field-row" id="msLightColorRow"><label class="field-label" for="msLightColor">Color</label><input type="color" class="ms-color" id="msLightColor"></div>
+                <div id="msLightLevels" style="display:grid;gap:16px">
+                  <div class="field"><div class="field-row"><label class="field-label" for="msLightBright">Brightness</label><span class="value" id="msLightBrightV"></span></div><input type="range" id="msLightBright" min="0" max="9" step="1"></div>
+                  <div class="field"><div class="field-row"><label class="field-label" for="msLightSpeed">Speed</label><span class="value" id="msLightSpeedV"></span></div><input type="range" id="msLightSpeed" min="0" max="9" step="1"></div>
+                </div>
+                <div class="field-row"><div class="field-label">Turn off while moving</div><label class="switch"><input type="checkbox" id="msMovingOff" aria-label="Turn the light off while moving"><span></span></label></div>
+                <div class="field-row" style="border-top:1px solid var(--border);padding-top:16px"><label class="field-label" for="msDpiFxMode">DPI indicator</label><select class="select" id="msDpiFxMode"></select></div>
+                <div id="msDpiFxLevels" style="display:grid;gap:16px">
+                  <div class="field"><div class="field-row"><label class="field-label" for="msDpiFxBright">Indicator brightness</label><span class="value" id="msDpiFxBrightV"></span></div><input type="range" id="msDpiFxBright" min="1" max="10" step="1"></div>
+                  <div class="field" id="msDpiFxSpeedRow"><div class="field-row"><label class="field-label" for="msDpiFxSpeed">Breathing speed</label><span class="value" id="msDpiFxSpeedV"></span></div><input type="range" id="msDpiFxSpeed" min="1" max="5" step="1"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -365,7 +382,7 @@
             <div class="card">
               <div class="card-head km-head">
                 <div><h2>Mouse</h2><p>Reported by the mouse on connect.</p></div>
-                <div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" id="msRefresh">Refresh</button><button class="btn btn-outline btn-sm" id="msDisconnect">Disconnect</button></div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="msRefresh">Refresh</button><button class="btn btn-outline btn-sm" id="msExport">Export</button><button class="btn btn-outline btn-sm" id="msImport">Import</button><button class="btn btn-outline btn-sm" id="msDisconnect">Disconnect</button></div>
               </div>
               <div class="card-body"><dl class="kv" id="msInfo"></dl></div>
             </div>
@@ -380,15 +397,23 @@
               <div class="card-body"><div class="seg" id="msLod" role="group" aria-label="Lift-off distance"></div></div>
             </div>
             <div class="card ms-online">
-              <div class="card-head"><h2>Performance</h2><p>Click timing, sensor sync and power saving.</p></div>
+              <div class="card-head km-head"><div><h2>Performance</h2><p>Polling rate, lift-off, click timing, sensor options and power saving.</p></div><button class="btn btn-ghost btn-sm" data-ms-defaults="performance" aria-label="Restore default performance settings">Defaults</button></div>
               <div class="card-body" style="display:grid;gap:16px">
                 <div class="field">
                   <div class="field-row"><label class="field-label" for="msDebounce">Debounce</label><select class="select" id="msDebounce"></select></div>
                   <div class="field-hint" id="msDebounceHint"></div>
                 </div>
-                <div class="field-row">
+                <div class="field-row" id="msMotionSyncRow">
                   <div><div class="field-label">Motion sync</div><div class="field-hint">Lines sensor reads up with USB polls: smoother tracking, slightly more delay.</div></div>
                   <label class="switch"><input type="checkbox" id="msMotionSync" aria-label="Motion sync"><span></span></label>
+                </div>
+                <div class="field-row">
+                  <div><div class="field-label">Angle snapping</div><div class="field-hint">Straightens slightly wobbly lines. Off for most games.</div></div>
+                  <label class="switch"><input type="checkbox" id="msAngle" aria-label="Angle snapping"><span></span></label>
+                </div>
+                <div class="field-row">
+                  <div><div class="field-label">Ripple control</div><div class="field-hint">Smooths sensor jitter at high DPI, at the cost of a little precision.</div></div>
+                  <label class="switch"><input type="checkbox" id="msRipple" aria-label="Ripple control"><span></span></label>
                 </div>
                 <div class="field-row"><label class="field-label" for="msSleep">Sleep after</label><select class="select" id="msSleep"></select></div>
               </div>
@@ -402,12 +427,13 @@
     <section class="page" id="page-console">
       <div class="page-head">
         <h1>Console</h1>
-        <p>Every packet sent to and received from the keyboard's vendor channel (0xFFA0).</p>
+        <p>Every packet sent to and received from the keyboard's vendor channel (0xFFA0) and the mouse's settings channel (report 8).</p>
       </div>
       <div class="card">
         <div class="card-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border)">
           <div><h2>Packets</h2><p id="logCount">0 packets</p></div>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="seg" id="logFilter" role="group" aria-label="Show packets from"><button data-src="all" aria-pressed="true">All</button><button data-src="kb" aria-pressed="false">Keyboard</button><button data-src="ms" aria-pressed="false">Mouse</button></div>
             <button class="btn btn-outline btn-sm" id="copyLog">Copy log</button>
             <button class="btn btn-ghost btn-sm" id="clearLog">Clear</button>
           </div>
@@ -437,25 +463,77 @@
   </form>
 </dialog>
 
+<dialog class="dialog" id="confirmDlg" aria-labelledby="confirmTitle">
+  <form method="dialog">
+    <h2 id="confirmTitle"></h2>
+    <p class="dlg-sub" id="confirmBody"></p>
+    <div class="dlg-actions">
+      <button class="btn btn-outline" value="cancel">Cancel</button>
+      <button class="btn btn-destructive" value="ok" id="confirmOk"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dialog" id="scDlg" aria-labelledby="scTitle">
+  <form method="dialog">
+    <h2 id="scTitle">Shortcut for <span id="scButton"></span></h2>
+    <p class="dlg-sub">Pick modifiers and one key. The mouse presses them together.</p>
+    <div class="sc-mods" id="scMods"></div>
+    <div class="field-row" style="margin-top:12px"><label class="field-label" for="scKey">Key</label><select class="select" id="scKey"></select></div>
+    <div class="dlg-actions">
+      <button class="btn btn-outline" value="cancel">Cancel</button>
+      <button class="btn btn-primary" value="ok">Save to mouse</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dialog dialog-wide" id="macroDlg" aria-labelledby="mcTitle">
+  <form method="dialog">
+    <h2 id="mcTitle">Macro for <span id="mcButton"></span></h2>
+    <p class="dlg-sub">Click Record and type: keys and the time between them are captured. Delays are in milliseconds.</p>
+    <div class="field"><label class="field-label" for="mcName">Name</label><input class="input" id="mcName" autocomplete="off"></div>
+    <div class="mc-tools">
+      <button type="button" class="btn btn-outline btn-sm" id="mcRecord" aria-pressed="false">Record</button>
+      <select class="select" id="mcMouse" aria-label="Mouse button to add"></select>
+      <button type="button" class="btn btn-outline btn-sm" id="mcAddClick">Add click</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="mcClear">Clear</button>
+      <span class="field-hint" id="mcCount"></span>
+    </div>
+    <div class="mc-list" id="mcList"></div>
+    <div class="field-row" style="margin-top:12px">
+      <label class="field-label" for="mcRepeat">Repeat</label>
+      <div style="display:flex;gap:8px"><select class="select" id="mcRepeat"><option value="times">A number of times</option><option value="254">Until the button is released</option><option value="253">Until the button is pressed again</option><option value="255">Until any button is pressed</option></select>
+      <input class="input" type="number" id="mcTimes" min="1" max="250" style="max-width:80px" aria-label="Times to repeat"></div>
+    </div>
+    <div class="dlg-actions">
+      <button class="btn btn-outline" value="cancel">Cancel</button>
+      <button class="btn btn-primary" value="ok" id="mcSave">Save to mouse</button>
+    </div>
+  </form>
+</dialog>
+
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
 <!-- Asset version (?v=): bump it in every link on each release so browsers fetch the new files. -->
 <!-- Classic scripts (not ES modules) so the page also works when opened straight from disk.
      They share one global scope, so the order matters: protocol first, main last. -->
-<script src="js/protocol.js?v=7"></script>
-<script src="js/state.js?v=7"></script>
-<script src="js/transport.js?v=7"></script>
-<script src="js/demo.js?v=7"></script>
-<script src="js/keycodes.js?v=7"></script>
-<script src="js/keyboard.js?v=7"></script>
-<script src="js/overview.js?v=7"></script>
-<script src="js/lighting.js?v=7"></script>
-<script src="js/custom-lighting.js?v=7"></script>
-<script src="js/keymap.js?v=7"></script>
-<script src="js/actuation.js?v=7"></script>
-<script src="js/travel.js?v=7"></script>
-<script src="js/mouse.js?v=7"></script>
-<script src="js/shell.js?v=7"></script>
-<script src="js/main.js?v=7"></script>
+<script src="js/protocol.js?v=8"></script>
+<script src="js/state.js?v=8"></script>
+<script src="js/transport.js?v=8"></script>
+<script src="js/demo.js?v=8"></script>
+<script src="js/keycodes.js?v=8"></script>
+<script src="js/keyboard.js?v=8"></script>
+<script src="js/overview.js?v=8"></script>
+<script src="js/lighting.js?v=8"></script>
+<script src="js/custom-lighting.js?v=8"></script>
+<script src="js/keymap.js?v=8"></script>
+<script src="js/actuation.js?v=8"></script>
+<script src="js/travel.js?v=8"></script>
+<script src="js/mouse.js?v=8"></script>
+<script src="js/mouse-buttons.js?v=8"></script>
+<script src="js/mouse-lighting.js?v=8"></script>
+<script src="js/backup.js?v=8"></script>
+<script src="js/shell.js?v=8"></script>
+<script src="js/main.js?v=8"></script>
 </body>
 </html>
