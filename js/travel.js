@@ -28,8 +28,9 @@ function onTravelReply(n) {
 function requestTravel(half) {
   return new Promise(res => {
     trWaiter = { half, res };
-    send(pack(CMD.RM ?? RM, [2, half, 0xff, 0xff]), 0).catch(() => {});
-    setTimeout(() => { if (trWaiter && trWaiter.res === res) { trWaiter = null; res(false); } }, 250);
+    const timeout = () => setTimeout(() => { if (trWaiter && trWaiter.res === res) { trWaiter = null; res(false); } }, 250);
+    // the timeout starts once the request is actually sent: behind a long write it may wait in the queue
+    send(pack(CMD.RM ?? RM, [2, half, 0xff, 0xff]), 0).then(timeout, timeout);
   });
 }
 async function trLoop() {

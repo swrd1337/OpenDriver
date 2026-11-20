@@ -32,7 +32,8 @@ There is no test runner. Test in a browser:
 2. `?demo` swaps WebHID for a simulated keyboard (`js/demo.js`) that answers every command OpenDriver sends: keymap, colors, actuation, live travel.
 3. Click **Connect keyboard**, then go through the page you changed, check the **Console** page for the packets, and check the browser console for errors.
 4. When you add a new command, teach `demoReply()` (keyboard) or `msDemoReply()` (mouse) in `js/demo.js` to answer it, so the feature can be tested without hardware.
-5. After touching mouse record code, run `node tools/check-mouse.js`: it compares the encoders with the official driver's builders, byte for byte.
+5. After touching packet code, run `node tools/check-keyboard.js` (keyboard, against the vendor's `protocol-keyboard` builders) and `node tools/check-mouse.js` (mouse, against the official Zaopin driver). They compare byte for byte.
+6. Keyboard packets go through `send()`, which puts one packet on the wire at a time; don't call `dev.sendReport` directly.
 
 Hardware testing is done by the maintainer. Ask for the packet log (Console → **Copy log**) rather than guessing what the keyboard did.
 

@@ -14,12 +14,12 @@ Nothing to install: it runs in Chrome or Edge and talks to the devices directly 
 | Page | What you can do |
 |---|---|
 | **Overview** | Device name, firmware, serial, actuation and travel range, a live lighting preview, and the mouse's battery, DPI and polling rate |
-| **Lighting** | Off / Static (8 presets, editable colors) / Dynamic (20 effects) / Custom; brightness, speed, direction and sleep timer |
+| **Lighting** | Off / Static (8 presets, editable colors) / Dynamic (20 effects) / Custom; brightness, speed, direction and sleep timer; live preview |
 | **Custom lighting** | Paint every key its own color: click or drag, color picker and swatches, presets (fill, WASD + arrows, rainbow, off), undo |
 | **Keymap** | Remap any key on the Base, Fn, Fn2 and Fn3 layers: letters, modifiers, F-keys, media, mouse, lighting and system keys; undo; reset the base layer or factory-reset |
 | **Actuation** | Global actuation point and deadzones, polling rate, per-key Global / Fixed / Rapid trigger with undo, live key travel test (depth on the keyboard, gauge and chart) |
 | **Mouse** | Zaopin Z2 / Z4D: DPI stages (count, values, separate X / Y where supported, colors, active stage, remove any stage but the first); buttons (clicks, scroll, DPI, fire key, DPI lock, media keys, shortcuts, recorded macros); polling rate, lift-off, debounce, motion sync, angle snapping, ripple control, sleep time; lighting and DPI indicator; battery level; restore defaults per section; reconnects automatically |
-| **Console** | Every packet sent and received by the keyboard and the mouse, filterable per device, for debugging and protocol work |
+| **Console** | Every packet sent and received by the keyboard and the mouse, filterable per device, for debugging and protocol work; **Report a problem** copies device details and recent packets for a GitHub issue |
 | **Backup** | Export the keyboard's or the mouse's settings to a JSON file and import them again (Overview → Device information, Mouse → Export / Import). Imported files are checked before anything is written. |
 
 Light and dark themes, works on narrow screens, respects "reduce motion".
@@ -82,7 +82,8 @@ js/
   main.js             connect / disconnect and start-up (loaded last)
 docs/PROTOCOL.md      the keyboard's HID protocol, as far as it is known
 docs/MOUSE-PROTOCOL.md  the Zaopin (CompX) mouse protocol
-tools/check-mouse.js  checks the mouse record encoders (node tools/check-mouse.js)
+tools/check-keyboard.js  checks the keyboard packet builders against the vendor's (node tools/check-keyboard.js)
+tools/check-mouse.js  checks the mouse record encoders against the official driver's (node tools/check-mouse.js)
 ```
 
 The scripts are plain classic scripts loaded in that order (no bundler, no ES modules), so the page also works from `file://`.
@@ -99,7 +100,7 @@ Other keyboards built on the same Sparklink platform (vendor ID `0x1CA4`, usage 
 ## Contributing
 
 Issues and pull requests are welcome. Before changing protocol code, read [AGENTS.md](AGENTS.md): it lists the rules that keep the tool safe for people's keyboards, and how to test with `?demo`.
-When reporting a bug, include the packet log from the **Console** page (**Copy log**).
+When reporting a bug, use **Report a problem** on the **Console** page: it copies the device details and recent packets for the issue.
 
 ## License
 

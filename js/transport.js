@@ -4,11 +4,20 @@
 /* =========================================================
    Transport
    ========================================================= */
-async function send(p, gap = 30) {
-  if (p[2] !== CMD.RM) addLog('tx', p.slice(0, 4 + p[1])); // live travel polling is too chatty to log
-  if (demo) { demoReply(p); await wait(Math.min(gap, 20)); return; }
-  await dev.sendReport(0, p);
-  await wait(gap);
+// One packet on the wire at a time, each followed by its gap, in the order they were sent.
+// Pages and the live travel loop all call send(), so they can't interleave mid-packet or
+// make a multi-report reply arrive mixed with another one.
+let sendChain = Promise.resolve();
+function send(p, gap = 30) {
+  const run = sendChain.then(async () => {
+    if (!demo && !dev) throw new Error('The keyboard is not connected.');
+    if (p[2] !== CMD.RM) addLog('tx', p.slice(0, 4 + p[1])); // live travel polling is too chatty to log
+    if (demo) { demoReply(p); await wait(Math.min(gap, 20)); return; }
+    await dev.sendReport(0, p);
+    await wait(gap);
+  });
+  sendChain = run.catch(() => {}); // a failed packet doesn't block the ones after it
+  return run;
 }
 function onInput(e) {
   const d = new Uint8Array(e.data.buffer);

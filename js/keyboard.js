@@ -43,9 +43,18 @@ function refreshKeyboards(rebuild) {
     renderPreview(); renderKeymap(); renderCustom(); renderPerf();
   });
 }
+// Overview preview and the Lighting page preview show the same thing.
 function renderPreview() {
   if (!light) return;
-  const kb = $('kb');
+  for (const kb of [$('kb'), $('ltKb')]) paintPreview(kb);
+  const on = light.on, isStatic = light.mode === 0, isDyn = light.mode > 0 && light.mode <= 20;
+  $('kbLegend').textContent = $('ltLegend').textContent = !on ? 'Lighting off'
+    : isStatic ? `Static · ${light.staticMode < 7 ? toHex(light.colors[light.staticMode]).toUpperCase() : 'Multicolor'} · brightness ${light.lum}/4`
+    : isDyn ? `Dynamic effect ${String(light.mode).padStart(2, '0')} · speed ${light.speed}/4`
+    : `Custom per-key colors · brightness ${light.lum}/4`;
+  $('lightPreview').hidden = on && light.mode > 20; // Custom has its own painting keyboard
+}
+function paintPreview(kb) {
   const on = light.on, isStatic = light.mode === 0, isDyn = light.mode > 0 && light.mode <= 20;
   kb.classList.toggle('lit', on);
   kb.classList.toggle('wave', on && (isDyn || (isStatic && light.staticMode === 7)));
@@ -60,14 +69,11 @@ function renderPreview() {
     const c = isCustom ? keyColors.get(+k.dataset.code) : null;
     if (c) k.style.setProperty('--col', `rgb(${c.join(' ')})`); else k.style.removeProperty('--col');
   });
-  $('kbLegend').textContent = !on ? 'Lighting off'
-    : isStatic ? `Static · ${light.staticMode < 7 ? toHex(light.colors[light.staticMode]).toUpperCase() : 'Multicolor'} · brightness ${light.lum}/4`
-    : isDyn ? `Dynamic effect ${String(light.mode).padStart(2, '0')} · speed ${light.speed}/4`
-    : `Custom per-key colors · brightness ${light.lum}/4`;
 }
 
 function buildAllKeyboards() {
   buildKeyboard($('kb'), null);
+  buildKeyboard($('ltKb'), null);
   buildKeyboard($('kmKb'), selectKey);
   buildKeyboard($('ckKb'), (code, e) => { if (e.detail === 0) paintKeys([code]); }); // keyboard activation; mouse/touch is handled by pointer events
   buildKeyboard($('acKb'), (code, e) => { if (e.detail === 0) { acSel.has(code) ? acSel.delete(code) : acSel.add(code); loadSelectionValues(); renderPerf(); } });

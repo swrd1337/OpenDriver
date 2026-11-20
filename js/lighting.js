@@ -8,6 +8,7 @@ const group = () => !light || !light.on ? 0 : light.mode === 0 ? 1 : light.mode 
 
 function renderLighting() {
   $('lightEmpty').hidden = !!light; $('lightContent').hidden = !light;
+  if (!light) $('lightPreview').hidden = true;
   if (!light) return;
   const g = group();
   document.querySelectorAll('#groupSeg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.group === g)));

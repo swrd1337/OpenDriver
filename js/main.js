@@ -16,6 +16,7 @@ function updateStatus() {
   $('connectBtn').querySelector('span').textContent = btnText;
   $('connectBtn').setAttribute('aria-label', any ? 'Connected devices' : 'Connect a device'); // the text is hidden on phones
   $('connectBtn').className = 'btn btn-sm ' + (any ? 'btn-outline' : 'btn-primary');
+  $('refreshBtn').disabled = !any;
   for (const [item, state, on] of [['devKb', 'devKbState', kb], ['devMs', 'devMsState', m]]) {
     $(item).classList.toggle('on', on); $(state).textContent = on ? 'Connected · Disconnect' : 'Connect';
   }
@@ -38,7 +39,6 @@ function setConnected(state, label) {
   kbStatus = label;
   updateStatus();
   $('emptyState').hidden = state; $('overviewContent').hidden = !state;
-  $('refreshBtn').disabled = !state;
   renderKeymap(); renderPerf();
 }
 
@@ -106,7 +106,16 @@ $('devMenu').addEventListener('keydown', e => {
 $('connectBtn2').onclick = connect;
 $('ovMsBtn').onclick = () => ms ? go('mouse') : msConnect();
 $('demoHint').hidden = demo;
-$('refreshBtn').onclick = readAll;
+// Re-read: everything that's connected, keyboard first
+$('refreshBtn').onclick = async () => {
+  $('refreshBtn').disabled = true;
+  try {
+    if (connected) await readAll();
+    if (ms) await msRefresh();
+    toast('Settings read again', [connected && 'keyboard', ms && 'mouse'].filter(Boolean).join(' and ').replace(/^./, c => c.toUpperCase()) + ' up to date.');
+  } catch (e) { toast('Could not read', e.message, true); }
+  finally { $('refreshBtn').disabled = !(connected || ms); }
+};
 if ('hid' in navigator) {
   navigator.hid.addEventListener('disconnect', e => {
     if (e.device === dev) { dev = null; setConnected(false, 'Disconnected'); toast('Keyboard disconnected', 'Plug it back in: it reconnects automatically.', true); }

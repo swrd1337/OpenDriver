@@ -31,6 +31,26 @@ $('copyLog').onclick = async () => {
   catch { toast('Could not copy', 'Clipboard access was blocked.', true); }
 };
 
+// A ready-to-paste bug report: app version, browser, connected devices (no serial number), recent packets.
+function buildReport() {
+  const ver = document.querySelector('script[src*="main.js"]')?.src.match(/v=(\d+)/)?.[1] ?? '?';
+  const lines = ['**What happened:**', '', '', '**What I expected:**', '', '', '---', `OpenDriver v${ver}${demo ? ' (demo)' : ''} · ${navigator.userAgent}`];
+  if (connected) lines.push(`Keyboard: ${info.name ?? '?'} · firmware ${info.firmware ?? '?'} · build ${info.build ?? '?'} · protocol ${info.protocol ?? '?'} · switch type ${info.keyType ?? '?'}`);
+  if (ms) lines.push(`Mouse: ${mdev ? '0x' + mdev.productId.toString(16).padStart(4, '0') : 'demo'} · model ${ms.cid}.${ms.mid} · ${ms.sensor ? 'PAW' + ms.sensor : 'unknown sensor'} · ${ms.link[0]}${ms.online ? '' : ' · asleep'}`);
+  if (!connected && !ms) lines.push('No device connected.');
+  const rows = shownRows().slice(-300);
+  lines.push('', `<details><summary>Last ${rows.length} packets${logFilter === 'all' ? '' : ` (${SRC_LABEL[logFilter]} only)`}</summary>`, '', '```',
+    ...rows.map(r => `${r.t} ${SRC_LABEL[r.src]} ${r.dir.toUpperCase()} ${r.h}`), '```', '</details>');
+  return lines.join('\n');
+}
+$('reportBtn').onclick = async () => {
+  const text = buildReport();
+  let copied = true;
+  try { await navigator.clipboard.writeText(text); } catch { copied = false; }
+  window.open('https://github.com/swrd1337/OpenDriver/issues/new', '_blank', 'noopener');
+  toast(copied ? 'Report copied' : 'Could not copy the report', copied ? 'Paste it into the GitHub issue that just opened.' : 'Clipboard access was blocked. Use Copy log instead.', !copied);
+};
+
 function toast(title, body, err = false) {
   const el = document.createElement('div');
   el.className = 'toast';
