@@ -1,0 +1,17 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# Firmware images and USB captures: vendor binaries and personal device data, never commit them
+*.bin
+*.hex
+*.pcap
+*.pcapng
+
+# Local scratch
+node_modules/
+*.log

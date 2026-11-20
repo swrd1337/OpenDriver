@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenDriver</title>
+<meta name="description" content="Open configuration tool for the Ajazz AK680 MAX keyboard over WebHID.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><svg viewBox="0 0 24 24" class="i"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></div>
+    OpenDriver
+  </div>
+  <span class="badge" id="statusBadge"><span class="dot"></span><span id="statusText">Disconnected</span></span>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost btn-icon" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24" class="i"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+  </button>
+  <button class="btn btn-outline btn-sm hide-sm" id="refreshBtn" disabled>
+    <svg viewBox="0 0 24 24" class="i"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Re-read
+  </button>
+  <button class="btn btn-primary btn-sm" id="connectBtn">
+    <svg viewBox="0 0 24 24" class="i"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M12 18v4"/></svg><span>Connect keyboard</span>
+  </button>
+</header>
+
+<div class="shell">
+  <nav class="sidebar" aria-label="Sections">
+    <div class="nav-label">Device</div>
+    <button class="nav-item" data-page="overview" aria-current="page">
+      <svg viewBox="0 0 24 24" class="i"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview
+    </button>
+    <button class="nav-item" data-page="lighting">
+      <svg viewBox="0 0 24 24" class="i"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2Z"/></svg>Lighting
+    </button>
+    <button class="nav-item" data-page="keymap">
+      <svg viewBox="0 0 24 24" class="i"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>Keymap
+    </button>
+    <button class="nav-item" data-page="actuation">
+      <svg viewBox="0 0 24 24" class="i"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Actuation
+    </button>
+    <div class="nav-label">Developer</div>
+    <button class="nav-item" data-page="console">
+      <svg viewBox="0 0 24 24" class="i"><path d="m4 17 6-6-6-6M12 19h8"/></svg>Console
+    </button>
+    <div class="sidebar-foot">Ajazz AK680 MAX · WebHID<br>Firmware flashing is disabled.</div>
+  </nav>
+
+  <main>
+    <!-- Overview -->
+    <section class="page active" id="page-overview">
+      <div class="page-head">
+        <h1>Overview</h1>
+        <p>Your keyboard at a glance, read live from the device.</p>
+      </div>
+
+      <div class="card" id="emptyState">
+        <div class="hero-empty">
+          <div class="ico"><svg viewBox="0 0 24 24" class="i"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M12 18v4"/></svg></div>
+          <h2>Connect your AK680 MAX</h2>
+          <p>Plug the keyboard in with the USB cable, set it to wired mode, then pick it from the browser's device list.</p>
+          <button class="btn btn-primary" id="connectBtn2">Connect keyboard</button>
+          <div class="steps"><span><b>1</b>Close the Ajazz web driver</span><span><b>2</b>Use Chrome or Edge</span><span><b>3</b>Choose "AK680 MAX"</span></div>
+        </div>
+      </div>
+
+      <div id="overviewContent" hidden>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head"><h2 id="kbName">AK680 MAX</h2><p>The preview mirrors the lighting currently set on the keyboard.</p></div>
+          <div class="kb-wrap">
+            <div class="kb" id="kb"></div>
+            <div class="kb-legend"><span id="kbLegend">—</span><button class="btn btn-outline btn-sm" data-goto="lighting">Edit lighting</button></div>
+          </div>
+        </div>
+
+        <div class="grid cols-3" style="margin-bottom:16px">
+          <div class="card stat"><div class="label">Actuation point</div><div class="num" id="stActuation">—</div></div>
+          <div class="card stat"><div class="label">Travel range</div><div class="num" id="stTravel">—</div></div>
+          <div class="card stat"><div class="label">Firmware</div><div class="num" id="stFirmware">—</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Device information</h2><p>Reported by the keyboard during sync.</p></div>
+          <div class="card-body"><dl class="kv" id="info"></dl></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lighting -->
+    <section class="page" id="page-lighting">
+      <div class="page-head">
+        <h1>Lighting</h1>
+        <p>Changes are sent as you make them and read back from the keyboard to confirm.</p>
+      </div>
+
+      <div class="card" id="lightEmpty"><div class="empty-note" style="border:0">Connect the keyboard to edit lighting.</div></div>
+
+      <div class="grid cols-3-2" id="lightContent" hidden>
+        <div class="card">
+          <div class="card-head"><h2>Effect</h2><p>Pick a lighting group, then a preset.</p></div>
+          <div class="card-body">
+            <div class="seg" role="group" aria-label="Lighting group" id="groupSeg">
+              <button data-group="0">Off</button>
+              <button data-group="1">Static</button>
+              <button data-group="2">Dynamic</button>
+              <button data-group="3">Custom</button>
+            </div>
+            <hr class="sep">
+            <div id="grpOff" class="empty-note">Lighting is turned off.</div>
+            <div id="grpStatic" hidden>
+              <div class="field-row" style="margin-bottom:12px"><span class="field-label">Color preset</span><span class="value" id="presetLabel"></span></div>
+              <div class="swatches" id="swatches"></div>
+              <div class="color-edit" id="colorEdit">
+                <input type="color" id="colorPick" aria-label="Preset color">
+                <div><div class="field-label">Edit preset color</div><div class="hexv" id="colorHex">#000000</div></div>
+              </div>
+            </div>
+            <div id="grpDynamic" hidden>
+              <div class="field-row" style="margin-bottom:12px"><span class="field-label">Effect</span><span class="value" id="effectLabel"></span></div>
+              <div class="effects" id="effects"></div>
+            </div>
+            <div id="grpCustom" class="empty-note" style="text-align:left" hidden>
+              Every key has its own color. Paint them in <b>Per-key colors</b> below: every change lights up and is kept on the keyboard right away.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Settings</h2><p>Applies to the selected effect.</p></div>
+          <div class="card-body" style="display:grid;gap:24px">
+            <div class="field">
+              <div class="field-row"><label class="field-label" for="lum">Brightness</label><span class="value" id="lumV">0 / 4</span></div>
+              <input type="range" id="lum" min="0" max="4" step="1">
+              <div class="ticks"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div>
+            </div>
+            <div class="field">
+              <div class="field-row"><label class="field-label" for="speed">Speed</label><span class="value" id="speedV">0 / 4</span></div>
+              <input type="range" id="speed" min="0" max="4" step="1">
+              <div class="ticks"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div>
+            </div>
+            <div class="field-row">
+              <div><div class="field-label">Reverse direction</div><div class="field-hint">Flips the flow of moving effects.</div></div>
+              <label class="switch"><input type="checkbox" id="dir" aria-label="Reverse direction"><span></span></label>
+            </div>
+            <div class="field-row">
+              <div><div class="field-label">Sleep after</div><div class="field-hint">Lights turn off when idle.</div></div>
+              <select class="select" id="sleep" aria-label="Sleep after"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="customCard" hidden style="margin-top:16px">
+        <div class="card-head ck-head">
+          <div><h2>Per-key colors</h2><p id="ckLegend">Click or drag across keys to paint. Right-click a key to pick up its color.</p></div>
+          <div class="ck-actions">
+            <button class="btn btn-outline btn-sm" id="ckRevert" disabled title="Back to the colors the keyboard had when you connected">
+              <svg viewBox="0 0 24 24" class="i"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Undo changes
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="ck-tools">
+            <input type="color" id="ckColor" value="#0a84ff" aria-label="Paint color">
+            <div class="ck-swatches" id="ckSwatches" role="group" aria-label="Quick colors"></div>
+            <span class="hexv" id="ckHex">#0A84FF</span>
+            <div class="spacer"></div>
+            <div class="ck-presets">
+              <button class="btn btn-outline btn-sm" data-preset="fill">Fill all</button>
+              <button class="btn btn-outline btn-sm" data-preset="wasd">WASD + arrows</button>
+              <button class="btn btn-outline btn-sm" data-preset="rainbow">Rainbow</button>
+              <button class="btn btn-outline btn-sm" data-preset="off">All off</button>
+            </div>
+          </div>
+          <div class="kb-scroll"><div class="kb interactive custom" id="ckKb"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Keymap -->
+    <section class="page" id="page-keymap">
+      <div class="page-head">
+        <h1>Keymap</h1>
+        <p>Click a key, then choose what it should send. Each change is saved to the keyboard right away.</p>
+      </div>
+
+      <div class="card" id="kmEmpty"><div class="empty-note" style="border:0">Connect the keyboard to edit its keymap.</div></div>
+
+      <div id="kmContent" hidden>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head km-head">
+            <div><h2 id="kmLayerTitle">Base layer</h2><p id="kmLegend">Reading keymap…</p></div>
+            <div class="km-actions">
+              <div class="seg layer-seg" role="group" aria-label="Layer" id="layerSeg">
+                <button data-layer="0">Base</button>
+                <button data-layer="1">Fn</button>
+                <button data-layer="2">Fn2</button>
+                <button data-layer="3">Fn3</button>
+              </div>
+              <button class="btn btn-outline btn-sm" id="kmResetBtn" style="height:36px">
+                <svg viewBox="0 0 24 24" class="i"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset…
+              </button>
+            </div>
+          </div>
+          <div class="kb-wrap"><div class="kb-scroll"><div class="kb interactive" id="kmKb"></div></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head" style="padding-bottom:20px;border-bottom:1px solid var(--border)"><div class="sel" id="kmSel"></div></div>
+          <div class="card-body">
+            <input class="input" type="search" id="kmSearch" placeholder="Search keys, e.g. volume, F5, mouse" aria-label="Search keys">
+            <div class="chips" id="kmChips" role="group" aria-label="Key categories"></div>
+            <div class="codes" id="kmCodes"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actuation -->
+    <section class="page" id="page-actuation">
+      <div class="page-head">
+        <h1>Actuation</h1>
+        <p>How far each key travels before it registers. Changes are written to the keyboard right away.</p>
+      </div>
+
+      <div class="card" id="acEmpty"><div class="empty-note" style="border:0">Connect the keyboard to edit actuation.</div></div>
+
+      <div id="acContent" hidden>
+        <div class="grid cols-3-2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><h2>Global actuation</h2><p>Used by every key set to <b>Global</b>.</p></div>
+            <div class="card-body" style="display:grid;gap:24px">
+              <div class="travel" aria-hidden="true">
+                <div class="travel-track"><div class="travel-fill" id="acVizFill"></div><div class="travel-mark" id="acVizMark"><span id="acVizLabel">1.50 mm</span></div></div>
+                <div class="ticks"><span>Top</span><span>Bottom</span></div>
+              </div>
+              <div class="field">
+                <div class="field-row"><label class="field-label" for="acTravel">Actuation point</label><span class="value" id="acTravelV">—</span></div>
+                <input type="range" id="acTravel">
+                <div class="ticks"><span id="acTravelMin"></span><span id="acTravelMax"></span></div>
+              </div>
+              <div class="field">
+                <div class="field-row"><div><label class="field-label" for="acPd">Press deadzone</label><div class="field-hint">Ignores this much travel before a press can count.</div></div><span class="value" id="acPdV">—</span></div>
+                <input type="range" id="acPd" min="0" max="1" step="0.01">
+              </div>
+              <div class="field">
+                <div class="field-row"><div><label class="field-label" for="acRd">Release deadzone</label><div class="field-hint">How far a key must come back before it counts as released.</div></div><span class="value" id="acRdV">—</span></div>
+                <input type="range" id="acRd" min="0" max="1" step="0.01">
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;gap:16px;align-content:start">
+            <div class="card">
+              <div class="card-head"><h2>Polling rate</h2><p>How often the keyboard reports to your PC.</p></div>
+              <div class="card-body">
+                <div class="field-row">
+                  <div><div class="field-label">Report rate</div><div class="field-hint" id="acRateHint">Higher is faster but uses more CPU.</div></div>
+                  <select class="select" id="acRate" aria-label="Polling rate"></select>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Key modes</h2><p>Each key uses one of these.</p></div>
+              <div class="card-body" style="display:grid;gap:12px">
+                <div class="mode-row"><span class="mode-chip global">G</span><div><b>Global</b><span>Follows the global actuation point.</span></div></div>
+                <div class="mode-row"><span class="mode-chip fixed">1.2</span><div><b>Fixed</b><span>Its own actuation point, for example lighter WASD.</span></div></div>
+                <div class="mode-row"><span class="mode-chip rt">RT</span><div><b>Rapid trigger</b><span>Re-presses as soon as the key moves back down, without needing to pass a fixed point.</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head km-head">
+            <div><h2>Live key travel</h2><p id="trLegend">Press Start, then press keys to see how far down they go.</p></div>
+            <button class="btn btn-primary btn-sm" id="trToggle"><svg viewBox="0 0 24 24" class="i"><path d="M7 4v16l13-8Z"/></svg>Start</button>
+          </div>
+          <div class="card-body tr-body">
+            <div class="tr-gauge" aria-hidden="true">
+              <div class="tr-track"><div class="tr-fill" id="trFill"></div><div class="tr-act" id="trAct"></div></div>
+              <div class="tr-scale"><span>0</span><span id="trMax"></span></div>
+            </div>
+            <div class="tr-main">
+              <div class="tr-readout"><span class="tr-key" id="trKey">—</span><span class="tr-mm" id="trMm">0.00 mm</span></div>
+              <div class="field-hint" id="trSub">Not running</div>
+              <canvas id="trChart" aria-label="Travel of the deepest key over time"></canvas>
+            </div>
+          </div>
+          <div class="kb-wrap" style="padding-top:0"><div class="kb-scroll"><div class="kb travel" id="trKb"></div></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head km-head">
+            <div><h2>Per-key settings</h2><p id="acLegend">Click or drag across keys to select them.</p></div>
+            <div class="ck-presets">
+              <button class="btn btn-outline btn-sm" data-acsel="all">Select all</button>
+              <button class="btn btn-outline btn-sm" data-acsel="wasd">WASD</button>
+              <button class="btn btn-ghost btn-sm" data-acsel="none">Clear</button>
+            </div>
+          </div>
+          <div class="kb-wrap"><div class="kb-scroll"><div class="kb interactive perf" id="acKb"></div></div></div>
+          <div class="card-body" style="border-top:1px solid var(--border)" id="acSel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Console -->
+    <section class="page" id="page-console">
+      <div class="page-head">
+        <h1>Console</h1>
+        <p>Every packet sent to and received from the keyboard's vendor channel (0xFFA0).</p>
+      </div>
+      <div class="card">
+        <div class="card-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <div><h2>Packets</h2><p id="logCount">0 packets</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" id="copyLog">Copy log</button>
+            <button class="btn btn-ghost btn-sm" id="clearLog">Clear</button>
+          </div>
+        </div>
+        <div class="log" id="log"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog class="dialog" id="resetDlg" aria-labelledby="resetTitle">
+  <form method="dialog">
+    <h2 id="resetTitle">Reset to default</h2>
+    <p class="dlg-sub">Choose what to reset. This can't be undone.</p>
+    <label class="opt">
+      <input type="radio" name="scope" value="base" checked>
+      <div><b>Base layer keymap</b><span>Every key on the base layer goes back to what's printed on it. Other layers, lighting and actuation stay as they are.</span></div>
+    </label>
+    <label class="opt">
+      <input type="radio" name="scope" value="factory">
+      <div><b>Factory reset the keyboard</b><span>Restores every setting: keymaps on all layers, lighting, actuation and rapid trigger. Use this to get the original Fn-layer shortcuts back.</span></div>
+    </label>
+    <div class="dlg-actions">
+      <button class="btn btn-outline" value="cancel">Cancel</button>
+      <button class="btn btn-destructive" value="ok" id="resetConfirm">Reset base layer</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<!-- Classic scripts (not ES modules) so the page also works when opened straight from disk.
+     They share one global scope, so the order matters: protocol first, main last. -->
+<script src="js/protocol.js"></script>
+<script src="js/state.js"></script>
+<script src="js/transport.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/keycodes.js"></script>
+<script src="js/keyboard.js"></script>
+<script src="js/overview.js"></script>
+<script src="js/lighting.js"></script>
+<script src="js/custom-lighting.js"></script>
+<script src="js/keymap.js"></script>
+<script src="js/actuation.js"></script>
+<script src="js/travel.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
