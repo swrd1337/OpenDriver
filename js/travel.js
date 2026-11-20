@@ -111,6 +111,11 @@ function drawTravelChart(max, act) {
 }
 
 (function initTravel() {
-  $('trToggle').onclick = () => setTravelRunning(!trRunning);
+  // drop focus after the click: keys pressed during the test must not show a focus ring or press Stop (Space / Enter)
+  $('trToggle').onclick = e => { setTravelRunning(!trRunning); e.currentTarget.blur(); };
   document.addEventListener('visibilitychange', () => { if (document.hidden) setTravelRunning(false); });
+  // while testing, keys are pressed to measure them: don't let Space / arrows / Page keys scroll the page
+  document.addEventListener('keydown', e => {
+    if (trRunning && !e.target.closest('input, select, textarea') && ['Space', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.code)) e.preventDefault();
+  });
 })();
