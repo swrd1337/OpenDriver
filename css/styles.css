@@ -462,4 +462,5 @@ input.ms-color { flex: none; }
 /* live travel drawn on the per-key keyboard while running */
 .kb.perf.travel .key, .kb.perf.travel .key.m-fixed, .kb.perf.travel .key.m-rt { background: linear-gradient(to bottom, color-mix(in srgb, var(--info) 55%, var(--key)) calc(var(--t, 0) * 100%), var(--key) calc(var(--t, 0) * 100%)); transition: none; }
 .kb.perf.travel .key.hit { border-color: var(--info); box-shadow: 0 2px 0 var(--key-edge), 0 0 0 1px var(--info); }
+.tr-head { align-items: center; } /* the Start / Stop button sits centered next to the title and description */
 .tr-head:has(+ .tr-body[hidden]) { padding-bottom: 20px; } /* collapsed: same spacing below as above */
