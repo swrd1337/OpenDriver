@@ -105,7 +105,7 @@ async function msReadSettings() {
       colors: Array.from({ length: 8 }, (_, i) => at(MS_ADDR.COLOR + i * 4, 3)),
       keys: MS_BUTTONS.map((_, i) => { const b = at(MS_ADDR.KEYS + i * 4, 3); return [b[0], b[1] << 8 | b[2]]; }),
     });
-    if (ms.link[0] === 'Wireless') await msReadBattery();
+    try { await msReadBattery(); } catch { ms.battery = null; } // like the official driver, on any connection; a mouse that doesn't answer just shows no battery row
   }
   renderMouse();
 }
@@ -235,6 +235,7 @@ const msActionName = ([t, p]) => MS_ACTIONS.flatMap(g => g[1]).find(a => a[1] ==
 
 function renderMouse() {
   $('msEmpty').hidden = !!ms; $('msContent').hidden = !ms;
+  $('msSensorHead').textContent = ms?.sensor ? `PAW${ms.sensor} sensor` : ms ? 'Unknown sensor' : 'Zaopin mouse';
   if (!ms) return;
   const info = [['Connection', ms.link[0]], ['Sensor', ms.sensor ? `PAW${ms.sensor}` : 'Unknown'], ['Model id', `${ms.cid}.${ms.mid}`]];
   if (ms.online && ms.battery) info.push(['Battery', `${ms.battery.level}%${ms.battery.charging ? ', charging' : ''}`]);
