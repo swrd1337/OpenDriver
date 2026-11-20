@@ -127,8 +127,30 @@ function loadSelectionValues() {
   if (perf.rtr.has(k)) acVals.rtr = perf.rtr.get(k) / 1000;
 }
 
+// Undo history for this connection: each item is the KEY entries that restore the previous values.
+const acUndo = [];
+function renderAcUndo() {
+  const b = $('acUndo'), last = acUndo.at(-1);
+  b.disabled = !last;
+  b.title = last ? `Undo the last change (${last.keys.length} key${last.keys.length === 1 ? '' : 's'})` : 'Nothing to undo';
+}
+async function undoPerf() {
+  const u = acUndo.pop();
+  renderAcUndo();
+  if (!u) return;
+  try {
+    for (let i = 0; i < u.entries.length; i += 14) await send(keyPack(true, u.entries.slice(i, i + 14)));
+    await readPerf(u.keys); // read back
+    toast('Change undone', `${u.keys.length} key${u.keys.length === 1 ? '' : 's'} back to how they were.`);
+  } catch (e) { toast('Could not undo', e.message, true); }
+}
+
 async function applyPerf() {
   const keys = [...acSel];
+  // remember what these keys had, so the change can be undone (only values the keyboard reported)
+  const prev = keys.flatMap(k => [[L.MODE, 'mode'], [L.DB0, 'db0'], [L.RTP, 'rtp'], [L.RTR, 'rtr']]
+    .filter(([, n]) => perf[n].has(k)).map(([ly, n]) => [k, ly, perf[n].get(k)]));
+  if (prev.length) { acUndo.push({ keys, entries: prev }); if (acUndo.length > 20) acUndo.shift(); renderAcUndo(); }
   const entries = [];
   for (const k of keys) {
     const mode = (acMode << 4) | advOf(k);
@@ -186,6 +208,7 @@ function writeGlobal() {
     if (b.dataset.acsel === 'wasd') [26, 4, 22, 7].filter(k => all.includes(k)).forEach(k => acSel.add(k));
     loadSelectionValues(); renderPerf();
   });
+  $('acUndo').onclick = undoPerf;
 
   // click / drag to select keys
   const kb = $('acKb');

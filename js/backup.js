@@ -225,6 +225,7 @@ async function kbImport(w) {
   if (w.colors) await batches(w.colors.filter(([k, c]) => toHex(keyColors.get(k) || [0, 0, 0]) !== toHex(c)).map(([k, c]) => [k, ...c]), e => krgbPack(true, e));
   if (w.global) await send(dbWritePack(w.global.actuation, w.global.pressDead, w.global.releaseDead));
   if (w.light) await send(prgbPack(1, w.light));
+  kmUndo.length = 0; acUndo.length = 0; renderKmUndo(); renderAcUndo(); // the import replaced what undo would restore
   await readAll(); // read everything back
   const bad = [];
   if (w.keymap && w.keymap.some((ly, i) => ly.some(([k, v]) => keymap[i].get(k) !== v))) bad.push('keymap');

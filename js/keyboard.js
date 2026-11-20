@@ -70,6 +70,5 @@ function buildAllKeyboards() {
   buildKeyboard($('kb'), null);
   buildKeyboard($('kmKb'), selectKey);
   buildKeyboard($('ckKb'), (code, e) => { if (e.detail === 0) paintKeys([code]); }); // keyboard activation; mouse/touch is handled by pointer events
-  buildKeyboard($('trKb'), null);
   buildKeyboard($('acKb'), (code, e) => { if (e.detail === 0) { acSel.has(code) ? acSel.delete(code) : acSel.add(code); loadSelectionValues(); renderPerf(); } });
 }

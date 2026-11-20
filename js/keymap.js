@@ -117,9 +117,31 @@ function renderPicker() {
 
 function selectKey(code) { kmSel = kmSel === code ? null : code; renderKeymap(); }
 
+// Undo history for this connection: [{ ly, key, prev }], newest last.
+const kmUndo = [];
+function renderKmUndo() {
+  const last = kmUndo.at(-1), b = $('kmUndo');
+  b.disabled = !last;
+  b.title = last ? `Undo the change to ${LAYER_PREFIX[last.ly]}${physName(last.key)}` : 'Nothing to undo';
+}
+async function undoKey() {
+  const u = kmUndo.pop();
+  renderKmUndo();
+  if (!u) return;
+  keymap[u.ly].set(u.key, u.prev);
+  renderKeymap();
+  try {
+    await send(keyPack(true, [[u.key, u.ly, u.prev]]));
+    await send(keyPack(false, [[u.key, u.ly, 0]])); // read back to confirm
+    toast('Change undone', `${LAYER_PREFIX[u.ly]}${physName(u.key)} sends ${keyName(u.prev, u.ly)} again.`);
+  } catch (e) { toast('Could not undo', e.message, true); }
+}
+
 async function assignKey(value) {
   if (kmSel == null) return;
   const key = kmSel, ly = kmLayer;
+  const prev = assigned(ly, key) ?? layerDefault(ly, key);
+  if (prev !== value) { kmUndo.push({ ly, key, prev }); if (kmUndo.length > 50) kmUndo.shift(); renderKmUndo(); }
   keymap[ly].set(key, value);
   renderKeymap();
   try {
@@ -134,6 +156,7 @@ async function assignKey(value) {
 /* ---------- reset ---------- */
 let resetBusy = false;
 async function resetBaseLayer() {
+  kmUndo.length = 0; renderKmUndo(); // a reset isn't undoable key by key
   const keys = layoutRows().flat().filter(k => assigned(0, k) !== layerDefault(0, k));
   if (!keys.length) { toast('Nothing to reset', 'The base layer already matches the defaults.'); return; }
   for (let i = 0; i < keys.length; i += 14) await send(keyPack(true, keys.slice(i, i + 14).map(k => [k, 0, layerDefault(0, k)])));
@@ -143,6 +166,7 @@ async function resetBaseLayer() {
   toast('Base layer reset', `${keys.length} key${keys.length === 1 ? '' : 's'} restored to default.`);
 }
 async function factoryReset() {
+  kmUndo.length = 0; acUndo.length = 0; renderKmUndo(); renderAcUndo();
   await send(cmdPack(0x11));   // ORDER_TYPE_RESTORE_FACTORY_SETTINGS; firmware needs > 200 ms
   await wait(800);
   kmSel = null;
@@ -169,5 +193,6 @@ $('resetDlg').addEventListener('close', async () => {
 });
 
 document.querySelectorAll('#layerSeg button').forEach(b => b.onclick = () => { kmLayer = +b.dataset.layer; renderKeymap(); });
+$('kmUndo').onclick = undoKey;
 $('kmSearch').oninput = e => { kmQuery = e.target.value; renderPicker(); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && kmSel != null && $('page-keymap').classList.contains('active')) { kmSel = null; renderKeymap(); } });

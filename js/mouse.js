@@ -264,7 +264,23 @@ function msSelect(sel, options, value, unknownLabel) {
   sel.replaceChildren(...opts);
 }
 
+// Mouse summary card on the Overview page.
+function renderMsOverview() {
+  const on = !!ms?.online;
+  $('ovMsTitle').textContent = ms ? `Mouse${ms.sensor ? ` · PAW${ms.sensor}` : ''}` : 'Mouse';
+  $('ovMsSub').textContent = !ms ? 'Have a Zaopin Z2 or Z4D? Connect it to change DPI, buttons and lighting.'
+    : on ? `${ms.link[0]} · stage ${ms.current + 1} of ${ms.stages} active.` : 'Connected, but asleep. Move the mouse to wake it.';
+  $('ovMsBtn').textContent = ms ? 'Mouse settings' : 'Connect mouse';
+  $('ovMsStats').hidden = !on;
+  if (!on) return;
+  const dpi = ms.dpis[ms.current], y = ms.dpisY[ms.current];
+  $('ovMsBattery').textContent = ms.battery ? `${ms.battery.level}%${ms.battery.charging ? ' ⚡' : ''}` : '—';
+  $('ovMsDpi').textContent = ms.cfg ? (dpi === y ? String(dpi) : `${dpi} × ${y}`) : '—';
+  $('ovMsRate').textContent = `${MS_RATES.find(r => r[1] === ms.rate)?.[0] ?? '?'} Hz`;
+}
+
 function renderMouse() {
+  renderMsOverview();
   $('msEmpty').hidden = !!ms; $('msContent').hidden = !ms;
   $('msSensorHead').textContent = ms?.sensor ? `PAW${ms.sensor} sensor` : ms ? 'Unknown sensor' : 'Zaopin mouse';
   if (!ms) return;

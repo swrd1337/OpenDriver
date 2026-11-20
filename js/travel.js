@@ -48,7 +48,8 @@ function setTravelRunning(on) {
     ? '<svg viewBox="0 0 24 24" class="i"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Stop'
     : '<svg viewBox="0 0 24 24" class="i"><path d="M7 4v16l13-8Z"/></svg>Start';
   $('trToggle').className = 'btn btn-sm ' + (on ? 'btn-outline' : 'btn-primary');
-  $('trLegend').textContent = on ? 'Live: press any key.' : 'Press Start, then press keys to see how far down they go.';
+  $('trLegend').textContent = on ? 'Live: press any key. The keyboard below shows how far each one goes down.' : 'Press Start, then press keys: the keyboard below shows how far each one goes down.';
+  $('trBody').hidden = !on; $('acKb').classList.toggle('travel', on);
   if (on) { trHist.length = 0; trLoop(); }
   else { if (trWaiter) { const w = trWaiter; trWaiter = null; w.res(false); } travelNow.clear(); trFocus = null; renderTravel(); }
 }
@@ -63,8 +64,8 @@ function actuationOf(code) {
 function renderTravel() {
   const max = travelRange().max;
   $('trMax').textContent = max.toFixed(1) + ' mm';
-  // keyboard
-  $('trKb').querySelectorAll('.key').forEach(k => {
+  // depth is drawn on the per-key keyboard (Actuation page) while running
+  $('acKb').querySelectorAll('.key').forEach(k => {
     const code = +k.dataset.code, v = travelNow.get(code) || 0;
     k.style.setProperty('--t', Math.min(1, v / max).toFixed(3));
     k.classList.toggle('hit', v > 0 && v >= actuationOf(code));

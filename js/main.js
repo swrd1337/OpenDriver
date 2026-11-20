@@ -11,6 +11,18 @@ function updateStatus() {
   $('statusBadge').className = 'badge' + (kb || m ? (demo ? ' demo' : ' live') : '');
   const kbName = demo ? 'Demo keyboard' : 'Keyboard';
   $('statusText').textContent = kb && m ? `${kbName} + mouse` : kb ? `${kbName} connected` : m ? (demo ? 'Demo mouse connected' : 'Mouse connected') : kbStatus;
+  // header device menu: one button for both devices
+  const any = kb || m, btnText = any ? 'Devices' : 'Connect';
+  $('connectBtn').querySelector('span').textContent = btnText;
+  $('connectBtn').setAttribute('aria-label', any ? 'Connected devices' : 'Connect a device'); // the text is hidden on phones
+  $('connectBtn').className = 'btn btn-sm ' + (any ? 'btn-outline' : 'btn-primary');
+  for (const [item, state, on] of [['devKb', 'devKbState', kb], ['devMs', 'devMsState', m]]) {
+    $(item).classList.toggle('on', on); $(state).textContent = on ? 'Connected · Disconnect' : 'Connect';
+  }
+}
+function setDevMenu(open) {
+  $('devMenu').hidden = !open; $('connectBtn').setAttribute('aria-expanded', String(open));
+  if (open) $('devKb').focus();
 }
 function setConnected(state, label) {
   connected = state;
@@ -21,15 +33,12 @@ function setConnected(state, label) {
     Object.values(perf).forEach(m => m.clear()); acSel.clear(); rejectedRates.clear();
     setTravelRunning(false);
     renderInfo(); renderLighting(); refreshKeyboards(true); $('kbLegend').textContent = '—';
+    kmUndo.length = 0; acUndo.length = 0; renderKmUndo(); renderAcUndo(); // undo history belongs to this connection
   }
   kbStatus = label;
   updateStatus();
   $('emptyState').hidden = state; $('overviewContent').hidden = !state;
   $('refreshBtn').disabled = !state;
-  const btnText = state ? 'Disconnect' : 'Connect keyboard';
-  $('connectBtn').querySelector('span').textContent = btnText;
-  $('connectBtn').setAttribute('aria-label', btnText); // the text is hidden on phones
-  $('connectBtn').className = 'btn btn-sm ' + (state ? 'btn-outline' : 'btn-primary');
   renderKeymap(); renderPerf();
 }
 
@@ -86,8 +95,17 @@ async function reconnect() {
   } catch {}
 }
 
-$('connectBtn').onclick = connect;
+$('connectBtn').onclick = e => { e.stopPropagation(); setDevMenu($('devMenu').hidden); };
+$('devKb').onclick = () => { setDevMenu(false); connect(); };
+$('devMs').onclick = () => { setDevMenu(false); msConnect(); };
+document.addEventListener('click', e => { if (!$('devMenu').hidden && !e.target.closest('.dev-menu-wrap')) setDevMenu(false); });
+$('devMenu').addEventListener('keydown', e => {
+  if (e.key === 'Escape') { setDevMenu(false); $('connectBtn').focus(); }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); (document.activeElement === $('devKb') ? $('devMs') : $('devKb')).focus(); }
+});
 $('connectBtn2').onclick = connect;
+$('ovMsBtn').onclick = () => ms ? go('mouse') : msConnect();
+$('demoHint').hidden = demo;
 $('refreshBtn').onclick = readAll;
 if ('hid' in navigator) {
   navigator.hid.addEventListener('disconnect', e => {
@@ -97,6 +115,8 @@ if ('hid' in navigator) {
 }
 
 buildAllKeyboards();
+updateStatus();
+renderMsOverview();
 renderInfo();
 renderKeymap();
 renderLog();

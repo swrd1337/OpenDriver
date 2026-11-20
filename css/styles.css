@@ -440,3 +440,25 @@ input.ms-color { flex: none; }
 .ms-actions { display: flex; gap: 8px; }
 .ms-backup { margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
 #page-mouse .card-body .field-row > select.select, #msKeys select.select { width: 200px; max-width: 60%; flex: none; }
+/* header device menu */
+.dev-menu-wrap { position: relative; }
+.dev-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: 280px; padding: 6px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); box-shadow: var(--shadow-lg); display: grid; gap: 2px; }
+.dev-menu[hidden] { display: none; }
+.dev-item { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: none; color: var(--foreground); text-align: left; cursor: pointer; }
+.dev-item:hover, .dev-item:focus-visible { background: var(--accent); outline: none; }
+.dev-item b { display: block; font-weight: 500; }
+.dev-item span { display: block; color: var(--muted-fg); font-size: 12px; }
+.dev-item em { font-style: normal; font-size: 12px; font-weight: 500; color: var(--muted-fg); }
+.dev-item.on em { color: var(--success); }
+/* overview */
+.hero-empty .hero-foot { margin: 20px 0 0; color: var(--muted-fg); font-size: 13px; max-width: 460px; }
+.hero-foot a { color: var(--foreground); }
+.ov-mouse { margin-top: 16px; }
+.ov-mouse .card-head { padding-bottom: 20px; }
+.ov-ms-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; border-top: 1px solid var(--border); padding-top: 16px; }
+.ov-ms-stats .label { color: var(--muted-fg); font-size: 13px; }
+.ov-ms-stats .num { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.ov-mouse:has(.ov-ms-stats:not([hidden])) .card-head { padding-bottom: 16px; }
+/* live travel drawn on the per-key keyboard while running */
+.kb.perf.travel .key, .kb.perf.travel .key.m-fixed, .kb.perf.travel .key.m-rt { background: linear-gradient(to bottom, color-mix(in srgb, var(--info) 55%, var(--key)) calc(var(--t, 0) * 100%), var(--key) calc(var(--t, 0) * 100%)); transition: none; }
+.kb.perf.travel .key.hit { border-color: var(--info); box-shadow: 0 2px 0 var(--key-edge), 0 0 0 1px var(--info); }

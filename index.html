@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenDriver</title>
-<meta name="description" content="Open configuration tool for the Ajazz AK680 MAX keyboard over WebHID.">
+<meta name="description" content="Open configuration tool for the Ajazz AK680 MAX keyboard and Zaopin Z2 / Z4D mice, over WebHID.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/styles.css?v=9">
+<link rel="stylesheet" href="css/styles.css?v=10">
 </head>
 <body>
 <header class="topbar">
@@ -28,9 +28,15 @@
   <button class="btn btn-outline btn-sm hide-sm" id="refreshBtn" disabled>
     <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Re-read
   </button>
-  <button class="btn btn-primary btn-sm" id="connectBtn" aria-label="Connect keyboard">
-    <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M12 18v4"/></svg><span>Connect keyboard</span>
-  </button>
+  <div class="dev-menu-wrap">
+    <button class="btn btn-primary btn-sm" id="connectBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="devMenu" aria-label="Connect a device">
+      <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M12 18v4"/></svg><span>Connect</span>
+    </button>
+    <div class="dev-menu" id="devMenu" role="menu" hidden>
+      <button class="dev-item" role="menuitem" id="devKb"><svg viewBox="0 0 24 24" width="16" height="16" class="i"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg><div><b>Keyboard</b><span>Ajazz AK680 MAX</span></div><em id="devKbState">Connect</em></button>
+      <button class="dev-item" role="menuitem" id="devMs"><svg viewBox="0 0 24 24" width="16" height="16" class="i"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/></svg><div><b>Mouse</b><span>Zaopin Z2 / Z4D</span></div><em id="devMsState">Connect</em></button>
+    </div>
+  </div>
 </header>
 
 <div class="shell">
@@ -58,7 +64,7 @@
     <div class="sidebar-foot">
       <a class="foot-link" href="https://github.com/swrd1337/OpenDriver" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14" class="gh" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>swrd1337/OpenDriver</a>
       <div>Created by <a href="https://github.com/swrd1337" target="_blank" rel="noopener">swrd1337</a></div>
-      <div class="foot-note">Ajazz AK680 MAX · WebHID · Firmware flashing is disabled.</div>
+      <div class="foot-note">Ajazz AK680 MAX · Zaopin Z2 / Z4D · WebHID · Firmware flashing is disabled.</div>
     </div>
   </nav>
 
@@ -67,7 +73,7 @@
     <section class="page active" id="page-overview">
       <div class="page-head">
         <h1>Overview</h1>
-        <p>Your keyboard at a glance, read live from the device.</p>
+        <p>Your keyboard and mouse at a glance, read live from the devices.</p>
       </div>
 
       <div class="card" id="emptyState">
@@ -77,6 +83,7 @@
           <p>Plug the keyboard in with the USB cable, set it to wired mode, then pick it from the browser's device list.</p>
           <button class="btn btn-primary" id="connectBtn2">Connect keyboard</button>
           <div class="steps"><span><b>1</b>Close the Ajazz web driver</span><span><b>2</b>Use Chrome or Edge</span><span><b>3</b>Choose "AK680 MAX"</span></div>
+          <p class="hero-foot">On Linux, add the <a href="https://github.com/swrd1337/OpenDriver#requirements" target="_blank" rel="noopener">udev rule</a> first, or the browser can't open the keyboard.<span id="demoHint"> No keyboard at hand? <a href="?demo">Try the demo</a>.</span></p>
         </div>
       </div>
 
@@ -98,6 +105,18 @@
         <div class="card">
           <div class="card-head km-head"><div><h2>Device information</h2><p>Reported by the keyboard during sync.</p></div><div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" id="kbExport">Export settings</button><button class="btn btn-outline btn-sm" id="kbImport">Import settings</button></div></div>
           <div class="card-body"><dl class="kv" id="info"></dl></div>
+        </div>
+      </div>
+
+      <div class="card ov-mouse" id="ovMouse">
+        <div class="card-head ms-head">
+          <div><h2 id="ovMsTitle">Mouse</h2><p id="ovMsSub">Have a Zaopin Z2 or Z4D? Connect it to change DPI, buttons and lighting.</p></div>
+          <button class="btn btn-outline btn-sm" id="ovMsBtn">Connect mouse</button>
+        </div>
+        <div class="card-body ov-ms-stats" id="ovMsStats" hidden>
+          <div><div class="label">Battery</div><div class="num" id="ovMsBattery">—</div></div>
+          <div><div class="label">DPI</div><div class="num" id="ovMsDpi">—</div></div>
+          <div><div class="label">Polling rate</div><div class="num" id="ovMsRate">—</div></div>
         </div>
       </div>
     </section>
@@ -214,6 +233,9 @@
                 <button data-layer="2">Fn2</button>
                 <button data-layer="3">Fn3</button>
               </div>
+              <button class="btn btn-outline btn-sm" id="kmUndo" style="height:36px" disabled>
+                <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-1"/></svg>Undo
+              </button>
               <button class="btn btn-outline btn-sm" id="kmResetBtn" style="height:36px">
                 <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset…
               </button>
@@ -293,10 +315,10 @@
 
         <div class="card" style="margin-bottom:16px">
           <div class="card-head km-head">
-            <div><h2>Live key travel</h2><p id="trLegend">Press Start, then press keys to see how far down they go.</p></div>
+            <div><h2>Live key travel</h2><p id="trLegend">Press Start, then press keys: the keyboard below shows how far each one goes down.</p></div>
             <button class="btn btn-primary btn-sm" id="trToggle"><svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M7 4v16l13-8Z"/></svg>Start</button>
           </div>
-          <div class="card-body tr-body">
+          <div class="card-body tr-body" id="trBody" hidden>
             <div class="tr-gauge" aria-hidden="true">
               <div class="tr-track"><div class="tr-fill" id="trFill"></div><div class="tr-act" id="trAct"></div></div>
               <div class="tr-scale"><span>0</span><span id="trMax"></span></div>
@@ -307,7 +329,6 @@
               <canvas id="trChart" aria-label="Travel of the deepest key over time"></canvas>
             </div>
           </div>
-          <div class="kb-wrap" style="padding-top:0"><div class="kb-scroll"><div class="kb travel" id="trKb"></div></div></div>
         </div>
 
         <div class="card">
@@ -317,6 +338,7 @@
               <button class="btn btn-outline btn-sm" data-acsel="all">Select all</button>
               <button class="btn btn-outline btn-sm" data-acsel="wasd">WASD</button>
               <button class="btn btn-ghost btn-sm" data-acsel="none">Clear</button>
+              <button class="btn btn-outline btn-sm" id="acUndo" disabled>Undo</button>
             </div>
           </div>
           <div class="kb-wrap"><div class="kb-scroll"><div class="kb interactive perf" id="acKb"></div></div></div>
@@ -523,23 +545,23 @@
 <!-- Asset version (?v=): bump it in every link on each release so browsers fetch the new files. -->
 <!-- Classic scripts (not ES modules) so the page also works when opened straight from disk.
      They share one global scope, so the order matters: protocol first, main last. -->
-<script src="js/protocol.js?v=9"></script>
-<script src="js/state.js?v=9"></script>
-<script src="js/transport.js?v=9"></script>
-<script src="js/demo.js?v=9"></script>
-<script src="js/keycodes.js?v=9"></script>
-<script src="js/keyboard.js?v=9"></script>
-<script src="js/overview.js?v=9"></script>
-<script src="js/lighting.js?v=9"></script>
-<script src="js/custom-lighting.js?v=9"></script>
-<script src="js/keymap.js?v=9"></script>
-<script src="js/actuation.js?v=9"></script>
-<script src="js/travel.js?v=9"></script>
-<script src="js/mouse.js?v=9"></script>
-<script src="js/mouse-buttons.js?v=9"></script>
-<script src="js/mouse-lighting.js?v=9"></script>
-<script src="js/backup.js?v=9"></script>
-<script src="js/shell.js?v=9"></script>
-<script src="js/main.js?v=9"></script>
+<script src="js/protocol.js?v=10"></script>
+<script src="js/state.js?v=10"></script>
+<script src="js/transport.js?v=10"></script>
+<script src="js/demo.js?v=10"></script>
+<script src="js/keycodes.js?v=10"></script>
+<script src="js/keyboard.js?v=10"></script>
+<script src="js/overview.js?v=10"></script>
+<script src="js/lighting.js?v=10"></script>
+<script src="js/custom-lighting.js?v=10"></script>
+<script src="js/keymap.js?v=10"></script>
+<script src="js/actuation.js?v=10"></script>
+<script src="js/travel.js?v=10"></script>
+<script src="js/mouse.js?v=10"></script>
+<script src="js/mouse-buttons.js?v=10"></script>
+<script src="js/mouse-lighting.js?v=10"></script>
+<script src="js/backup.js?v=10"></script>
+<script src="js/shell.js?v=10"></script>
+<script src="js/main.js?v=10"></script>
 </body>
 </html>

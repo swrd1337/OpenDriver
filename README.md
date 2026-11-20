@@ -1,23 +1,23 @@
 # OpenDriver
 
-An open, browser-based configuration tool for the **Ajazz AK680 MAX** magnetic (Hall-effect) keyboard.
-Nothing to install: it runs in Chrome or Edge and talks to the keyboard directly over [WebHID](https://developer.mozilla.org/docs/Web/API/WebHID_API).
+An open, browser-based configuration tool for the **Ajazz AK680 MAX** magnetic (Hall-effect) keyboard and **Zaopin Z2 / Z4D** mice.
+Nothing to install: it runs in Chrome or Edge and talks to the devices directly over [WebHID](https://developer.mozilla.org/docs/Web/API/WebHID_API). Both can be connected at the same time.
 
 **Use it:** https://swrd1337.github.io/OpenDriver/
-**Try it without a keyboard:** https://swrd1337.github.io/OpenDriver/?demo
+**Try it without the hardware:** https://swrd1337.github.io/OpenDriver/?demo (a simulated keyboard and mouse)
 
-> OpenDriver is an independent project. It is not affiliated with, endorsed by, or supported by Ajazz or Sparklink.
-> It uses the same commands as the official web driver, but you use it at your own risk.
+> OpenDriver is an independent project. It is not affiliated with, endorsed by, or supported by Ajazz, Sparklink, Zaopin or CompX.
+> It uses the same commands as the official web drivers, but you use it at your own risk.
 
 ## Features
 
 | Page | What you can do |
 |---|---|
-| **Overview** | Device name, firmware, serial, actuation and travel range, plus a live lighting preview |
+| **Overview** | Device name, firmware, serial, actuation and travel range, a live lighting preview, and the mouse's battery, DPI and polling rate |
 | **Lighting** | Off / Static (8 presets, editable colors) / Dynamic (20 effects) / Custom; brightness, speed, direction and sleep timer |
 | **Custom lighting** | Paint every key its own color: click or drag, color picker and swatches, presets (fill, WASD + arrows, rainbow, off), undo |
-| **Keymap** | Remap any key on the Base, Fn, Fn2 and Fn3 layers: letters, modifiers, F-keys, media, mouse, lighting and system keys; reset the base layer or factory-reset |
-| **Actuation** | Global actuation point and deadzones, polling rate, per-key Global / Fixed / Rapid trigger, live key travel test with a depth gauge and chart |
+| **Keymap** | Remap any key on the Base, Fn, Fn2 and Fn3 layers: letters, modifiers, F-keys, media, mouse, lighting and system keys; undo; reset the base layer or factory-reset |
+| **Actuation** | Global actuation point and deadzones, polling rate, per-key Global / Fixed / Rapid trigger with undo, live key travel test (depth on the keyboard, gauge and chart) |
 | **Mouse** | Zaopin Z2 / Z4D: DPI stages (count, values, separate X / Y where supported, colors, active stage, remove any stage but the first); buttons (clicks, scroll, DPI, fire key, DPI lock, media keys, shortcuts, recorded macros); polling rate, lift-off, debounce, motion sync, angle snapping, ripple control, sleep time; lighting and DPI indicator; battery level; restore defaults per section; reconnects automatically |
 | **Console** | Every packet sent and received by the keyboard and the mouse, filterable per device, for debugging and protocol work |
 | **Backup** | Export the keyboard's or the mouse's settings to a JSON file and import them again (Overview → Device information, Mouse → Export / Import). Imported files are checked before anything is written. |
