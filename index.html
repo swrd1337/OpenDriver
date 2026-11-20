@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/styles.css?v=4">
+<link rel="stylesheet" href="css/styles.css?v=5">
 </head>
 <body>
 <header class="topbar">
@@ -47,6 +47,9 @@
     </button>
     <button class="nav-item" data-page="actuation">
       <svg viewBox="0 0 24 24" width="16" height="16" class="i"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Actuation
+    </button>
+    <button class="nav-item" data-page="mouse">
+      <svg viewBox="0 0 24 24" width="16" height="16" class="i"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/></svg>Mouse
     </button>
     <div class="nav-label">Developer</div>
     <button class="nav-item" data-page="console">
@@ -322,6 +325,61 @@
       </div>
     </section>
 
+    <!-- Mouse -->
+    <section class="page" id="page-mouse">
+      <div class="page-head">
+        <h1>Mouse</h1>
+        <p>Zaopin Z2 and Z4D. Works on its own, next to the keyboard. Changes are written to the mouse right away.</p>
+      </div>
+
+      <div class="card" id="msEmpty">
+        <div class="hero-empty">
+          <div class="ico"><svg viewBox="0 0 24 24" width="16" height="16" class="i"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/></svg></div>
+          <h2>Connect your Zaopin mouse</h2>
+          <p>Plug in the 2.4 GHz receiver or the USB cable, then pick the mouse from the browser's device list.</p>
+          <button class="btn btn-primary" id="msConnectBtn">Connect mouse</button>
+          <div class="steps"><span><b>1</b>Close the Zaopin web driver</span><span><b>2</b>Use Chrome or Edge</span><span><b>3</b>Move the mouse to wake it</span></div>
+        </div>
+      </div>
+
+      <div id="msContent" hidden>
+        <div class="grid cols-3-2" style="margin-bottom:16px">
+          <div style="display:grid;gap:16px;align-content:start">
+            <div class="card" id="msOffline">
+              <div class="empty-note" style="border:0">The receiver is connected, but the mouse is asleep or off. Move it, then click Refresh.</div>
+            </div>
+            <div class="card" id="msSettings">
+              <div class="card-head km-head">
+                <div><h2>DPI stages</h2><p id="msDpiHint"></p></div>
+                <div class="field-row" style="gap:8px"><label class="field-label" for="msStages">Stages</label><select class="select" id="msStages"></select></div>
+              </div>
+              <div class="card-body" style="display:grid;gap:10px" id="msDpis"></div>
+            </div>
+          </div>
+
+          <div style="display:grid;gap:16px;align-content:start">
+            <div class="card">
+              <div class="card-head km-head">
+                <div><h2>Mouse</h2><p>Reported by the mouse on connect.</p></div>
+                <div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" id="msRefresh">Refresh</button><button class="btn btn-outline btn-sm" id="msDisconnect">Disconnect</button></div>
+              </div>
+              <div class="card-body"><dl class="kv" id="msInfo"></dl></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Polling rate</h2><p>How often the mouse reports to your PC.</p></div>
+              <div class="card-body">
+                <div class="field-row"><label class="field-label" for="msRate">Report rate</label><select class="select" id="msRate"></select></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>Lift-off distance</h2><p>How high you can lift the mouse before it stops tracking.</p></div>
+              <div class="card-body"><div class="seg" id="msLod" role="group" aria-label="Lift-off distance"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Console -->
     <section class="page" id="page-console">
       <div class="page-head">
@@ -366,19 +424,20 @@
 <!-- Asset version (?v=): bump it in every link on each release so browsers fetch the new files. -->
 <!-- Classic scripts (not ES modules) so the page also works when opened straight from disk.
      They share one global scope, so the order matters: protocol first, main last. -->
-<script src="js/protocol.js?v=4"></script>
-<script src="js/state.js?v=4"></script>
-<script src="js/transport.js?v=4"></script>
-<script src="js/demo.js?v=4"></script>
-<script src="js/keycodes.js?v=4"></script>
-<script src="js/keyboard.js?v=4"></script>
-<script src="js/overview.js?v=4"></script>
-<script src="js/lighting.js?v=4"></script>
-<script src="js/custom-lighting.js?v=4"></script>
-<script src="js/keymap.js?v=4"></script>
-<script src="js/actuation.js?v=4"></script>
-<script src="js/travel.js?v=4"></script>
-<script src="js/shell.js?v=4"></script>
-<script src="js/main.js?v=4"></script>
+<script src="js/protocol.js?v=5"></script>
+<script src="js/state.js?v=5"></script>
+<script src="js/transport.js?v=5"></script>
+<script src="js/demo.js?v=5"></script>
+<script src="js/keycodes.js?v=5"></script>
+<script src="js/keyboard.js?v=5"></script>
+<script src="js/overview.js?v=5"></script>
+<script src="js/lighting.js?v=5"></script>
+<script src="js/custom-lighting.js?v=5"></script>
+<script src="js/keymap.js?v=5"></script>
+<script src="js/actuation.js?v=5"></script>
+<script src="js/travel.js?v=5"></script>
+<script src="js/mouse.js?v=5"></script>
+<script src="js/shell.js?v=5"></script>
+<script src="js/main.js?v=5"></script>
 </body>
 </html>

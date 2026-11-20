@@ -13,7 +13,7 @@ Hosted on GitHub Pages from the repository root.
 
 ```
 protocol → state → transport → demo → keycodes → keyboard → overview → lighting
-→ custom-lighting → keymap → actuation → travel → shell → main
+→ custom-lighting → keymap → actuation → travel → mouse → shell → main
 ```
 
 - They are **classic scripts, not ES modules**, so the page works from `file://` (users open it straight from disk). Don't switch to `type="module"` or `import`/`export`.
@@ -36,9 +36,9 @@ Hardware testing is done by the maintainer. Ask for the packet log (Console → 
 
 ## Protocol rules (read before touching protocol or write code)
 
-The full reference is [docs/PROTOCOL.md](docs/PROTOCOL.md). These rules exist because breaking them can leave someone's keyboard misconfigured:
+The full reference is [docs/PROTOCOL.md](docs/PROTOCOL.md) (keyboard) and [docs/MOUSE-PROTOCOL.md](docs/MOUSE-PROTOCOL.md) (Zaopin mice). These rules exist because breaking them can leave someone's keyboard misconfigured:
 
-- **Never send bootloader / firmware commands** (`0x08`–`0x0E`). They are deliberately absent from the code. Don't add them.
+- **Never send bootloader / firmware commands** (keyboard: `0x08`–`0x0E`; mouse: `0x09`, `0x0B`–`0x0D`, `0x11`, see MOUSE-PROTOCOL.md). They are deliberately absent from the code. Don't add them. (On the mouse, `0x08` is the ordinary flash read.)
 - **Match the official app's packets byte for byte.** Before adding a command, find how the official web driver or the vendor's `@sparklinkplayjoy/protocol-keyboard` source builds it.
 - **Read back after every write** and show what the keyboard actually stored. The firmware usually doesn't report errors; it just keeps the old value. See the polling-rate refusal in PROTOCOL.md.
 - **The Fn key's matrix code is `0x01`, but its base-layer default value is `0xF001` (Fn1).** Writing `0x01` makes Fn dead. Use `layerDefault()`.

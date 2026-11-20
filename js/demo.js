@@ -72,3 +72,20 @@ function seedDemoKeymap() { // demo "factory" state: F1-F12 on layer 2
 }
 seedDemoKeymap();
 demoKeymap[0].set(57, 41); // demo: Caps Lock -> Esc, so there is something to reset
+
+// Demo mouse: a 3950-sensor Z4D on a 4K dongle, answering from a fake settings flash.
+let demoMsFlash = null; // built on first use: dpiEncode lives in mouse.js, which loads later
+function demoMsInit() {
+  demoMsFlash = new Uint8Array(256).fill(255);
+  [[0, 1], [2, 6], [4, 1], [10, 1]].forEach(([a, v]) => demoMsFlash.set([v, 85 - v & 255], a)); // 1000 Hz, 6 stages, stage 2, 1 mm
+  [400, 800, 1600, 2400, 3200, 6400, 800, 800].forEach((d, i) => demoMsFlash.set(dpiEncode(d), 12 + i * 4));
+}
+function msDemoReply(p) {
+  if (!demoMsFlash) demoMsInit();
+  const r = p.slice(); r[1] = 0;
+  if (p[0] === MS_CMD.HANDSHAKE) { r[9] = 7; r[10] = 4; r[11] = 1; }
+  else if (p[0] === MS_CMD.ONLINE) r[5] = 1;
+  else if (p[0] === MS_CMD.READ) r.set(demoMsFlash.slice(p[2] << 8 | p[3], (p[2] << 8 | p[3]) + p[4]), 5);
+  else if (p[0] === MS_CMD.WRITE) demoMsFlash.set(p.slice(5, 5 + p[4]), p[2] << 8 | p[3]);
+  setTimeout(() => msHandle(r), 5);
+}

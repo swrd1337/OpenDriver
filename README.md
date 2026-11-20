@@ -18,6 +18,7 @@ Nothing to install: it runs in Chrome or Edge and talks to the keyboard directly
 | **Custom lighting** | Paint every key its own color: click or drag, color picker and swatches, presets (fill, WASD + arrows, rainbow, off), undo |
 | **Keymap** | Remap any key on the Base, Fn, Fn2 and Fn3 layers: letters, modifiers, F-keys, media, mouse, lighting and system keys; reset the base layer or factory-reset |
 | **Actuation** | Global actuation point and deadzones, polling rate, per-key Global / Fixed / Rapid trigger, live key travel test with a depth gauge and chart |
+| **Mouse** | Zaopin Z2 / Z4D: DPI stages (count, values, active stage, remove any stage but the first), polling rate, lift-off distance |
 | **Console** | Every packet sent and received, for debugging and protocol work |
 
 Light and dark themes, works on narrow screens, respects "reduce motion".
@@ -27,6 +28,13 @@ Light and dark themes, works on narrow screens, respects "reduce motion".
 - **Chrome or Edge** (desktop). Firefox and Safari don't support WebHID.
 - The keyboard connected **by USB cable**, in wired mode.
 - Close the official Ajazz web driver first: only one page can use the keyboard at a time.
+- On **Linux**, your user needs access to the device's `hidraw` nodes. Add a udev rule, then replug:
+
+  ```
+  echo 'KERNEL=="hidraw*", ATTRS{idVendor}=="1ca4", ATTRS{idProduct}=="0601", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/70-ajazz-ak680.rules
+  echo 'KERNEL=="hidraw*", ATTRS{idVendor}=="3554", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/70-zaopin-mouse.rules
+  sudo udevadm control --reload && sudo udevadm trigger
+  ```
 
 After the first connect, OpenDriver **reconnects by itself**: when you reload the page or plug the keyboard back in. Click **Disconnect** to stop that.
 It uses Chrome's remembered permission for the site, so it works best on the hosted page. A copy opened from disk may ask again.
@@ -65,9 +73,11 @@ js/
   keymap.js           Keymap page, layers, reset dialog
   actuation.js        Actuation page
   travel.js           live key travel test
+  mouse.js            Mouse page: Zaopin Z2 / Z4D protocol and UI
   shell.js            console, toasts, navigation, theme
   main.js             connect / disconnect and start-up (loaded last)
 docs/PROTOCOL.md      the keyboard's HID protocol, as far as it is known
+docs/MOUSE-PROTOCOL.md  the Zaopin (CompX) mouse protocol
 ```
 
 The scripts are plain classic scripts loaded in that order (no bundler, no ES modules), so the page also works from `file://`.
@@ -76,6 +86,8 @@ The scripts are plain classic scripts loaded in that order (no bundler, no ES mo
 
 [docs/PROTOCOL.md](docs/PROTOCOL.md) documents the keyboard's vendor HID protocol: packet layout, checksum, commands, keymap layers, lighting, actuation, polling rate and the live travel stream.
 It was worked out from the official web driver and the vendor's public docs ([sparklinkplayjoy/keyboard-docs](https://github.com/sparklinkplayjoy/keyboard-docs)), then checked against a real keyboard.
+
+[docs/MOUSE-PROTOCOL.md](docs/MOUSE-PROTOCOL.md) covers the Zaopin mice, worked out from Zaopin's official web driver.
 
 Other keyboards built on the same Sparklink platform (vendor ID `0x1CA4`, usage page `0xFFA0`) probably speak the same protocol, but only the AK680 MAX has been tested.
 
