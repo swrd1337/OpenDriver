@@ -28,6 +28,9 @@ Light and dark themes, works on narrow screens, respects "reduce motion".
 - The keyboard connected **by USB cable**, in wired mode.
 - Close the official Ajazz web driver first: only one page can use the keyboard at a time.
 
+After the first connect, OpenDriver **reconnects by itself**: when you reload the page or plug the keyboard back in. Click **Disconnect** to stop that.
+It uses Chrome's remembered permission for the site, so it works best on the hosted page. A copy opened from disk may ask again.
+
 ## Running it locally
 
 No build step and no dependencies. Either:
