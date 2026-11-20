@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/styles.css?v=8">
+<link rel="stylesheet" href="css/styles.css?v=9">
 </head>
 <body>
 <header class="topbar">
@@ -349,18 +349,21 @@
               <div class="empty-note" style="border:0">The receiver is connected, but the mouse is asleep or off. Move it: the page picks it up within a few seconds.</div>
             </div>
             <div class="card ms-online">
-              <div class="card-head km-head">
+              <div class="card-head ms-head">
                 <div><h2>DPI stages</h2><p id="msDpiHint"></p></div>
-                <div class="field-row" style="gap:8px"><label class="field-label" for="msStages">Stages</label><select class="select" id="msStages"></select><button class="btn btn-ghost btn-sm" data-ms-defaults="dpi" aria-label="Restore default DPI stages">Defaults</button></div>
+                <button class="btn btn-outline btn-sm" data-ms-defaults="dpi" aria-label="Restore default DPI stages">Defaults</button>
               </div>
-              <div class="card-body" style="display:grid;gap:10px" id="msDpis"></div>
+              <div class="card-body" style="display:grid;gap:10px">
+                <div class="field-row"><label class="field-label" for="msStages">Stages</label><select class="select" id="msStages"></select></div>
+                <div style="display:grid;gap:10px" id="msDpis"></div>
+              </div>
             </div>
             <div class="card ms-online">
-              <div class="card-head km-head"><div><h2>Buttons</h2><p>What each button does. At least one button must stay on Left click.</p></div><button class="btn btn-ghost btn-sm" data-ms-defaults="buttons" aria-label="Restore default buttons">Defaults</button></div>
+              <div class="card-head ms-head"><div><h2>Buttons</h2><p>What each button does. At least one button must stay on Left click.</p></div><button class="btn btn-outline btn-sm" data-ms-defaults="buttons" aria-label="Restore default buttons">Defaults</button></div>
               <div class="card-body" style="display:grid;gap:14px" id="msKeys"></div>
             </div>
             <div class="card ms-online">
-              <div class="card-head km-head"><div><h2>Lighting</h2><p>The mouse's decorative light and its DPI indicator.</p></div><button class="btn btn-ghost btn-sm" data-ms-defaults="lighting" aria-label="Restore default lighting">Defaults</button></div>
+              <div class="card-head ms-head"><div><h2>Lighting</h2><p>The mouse's decorative light and its DPI indicator.</p></div><button class="btn btn-outline btn-sm" data-ms-defaults="lighting" aria-label="Restore default lighting">Defaults</button></div>
               <div class="card-body" style="display:grid;gap:16px">
                 <div class="field-row"><label class="field-label" for="msLightMode">Light effect</label><select class="select" id="msLightMode"></select></div>
                 <div class="field-row" id="msLightColorRow"><label class="field-label" for="msLightColor">Color</label><input type="color" class="ms-color" id="msLightColor"></div>
@@ -380,11 +383,14 @@
 
           <div style="display:grid;gap:16px;align-content:start">
             <div class="card">
-              <div class="card-head km-head">
+              <div class="card-head ms-head">
                 <div><h2>Mouse</h2><p>Reported by the mouse on connect.</p></div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="msRefresh">Refresh</button><button class="btn btn-outline btn-sm" id="msExport">Export</button><button class="btn btn-outline btn-sm" id="msImport">Import</button><button class="btn btn-outline btn-sm" id="msDisconnect">Disconnect</button></div>
+                <div class="ms-actions"><button class="btn btn-outline btn-sm" id="msRefresh">Refresh</button><button class="btn btn-outline btn-sm" id="msDisconnect">Disconnect</button></div>
               </div>
-              <div class="card-body"><dl class="kv" id="msInfo"></dl></div>
+              <div class="card-body">
+                <dl class="kv" id="msInfo"></dl>
+                <div class="field-row ms-backup"><div class="field-label">Settings backup</div><div class="ms-actions"><button class="btn btn-outline btn-sm" id="msExport">Export</button><button class="btn btn-outline btn-sm" id="msImport">Import</button></div></div>
+              </div>
             </div>
             <div class="card ms-online">
               <div class="card-head"><h2>Polling rate</h2><p>How often the mouse reports to your PC.</p></div>
@@ -397,7 +403,7 @@
               <div class="card-body"><div class="seg" id="msLod" role="group" aria-label="Lift-off distance"></div></div>
             </div>
             <div class="card ms-online">
-              <div class="card-head km-head"><div><h2>Performance</h2><p>Polling rate, lift-off, click timing, sensor options and power saving.</p></div><button class="btn btn-ghost btn-sm" data-ms-defaults="performance" aria-label="Restore default performance settings">Defaults</button></div>
+              <div class="card-head ms-head"><div><h2>Performance</h2><p>Polling rate, lift-off, click timing, sensor options and power saving.</p></div><button class="btn btn-outline btn-sm" data-ms-defaults="performance" aria-label="Restore default performance settings">Defaults</button></div>
               <div class="card-body" style="display:grid;gap:16px">
                 <div class="field">
                   <div class="field-row"><label class="field-label" for="msDebounce">Debounce</label><select class="select" id="msDebounce"></select></div>
@@ -517,23 +523,23 @@
 <!-- Asset version (?v=): bump it in every link on each release so browsers fetch the new files. -->
 <!-- Classic scripts (not ES modules) so the page also works when opened straight from disk.
      They share one global scope, so the order matters: protocol first, main last. -->
-<script src="js/protocol.js?v=8"></script>
-<script src="js/state.js?v=8"></script>
-<script src="js/transport.js?v=8"></script>
-<script src="js/demo.js?v=8"></script>
-<script src="js/keycodes.js?v=8"></script>
-<script src="js/keyboard.js?v=8"></script>
-<script src="js/overview.js?v=8"></script>
-<script src="js/lighting.js?v=8"></script>
-<script src="js/custom-lighting.js?v=8"></script>
-<script src="js/keymap.js?v=8"></script>
-<script src="js/actuation.js?v=8"></script>
-<script src="js/travel.js?v=8"></script>
-<script src="js/mouse.js?v=8"></script>
-<script src="js/mouse-buttons.js?v=8"></script>
-<script src="js/mouse-lighting.js?v=8"></script>
-<script src="js/backup.js?v=8"></script>
-<script src="js/shell.js?v=8"></script>
-<script src="js/main.js?v=8"></script>
+<script src="js/protocol.js?v=9"></script>
+<script src="js/state.js?v=9"></script>
+<script src="js/transport.js?v=9"></script>
+<script src="js/demo.js?v=9"></script>
+<script src="js/keycodes.js?v=9"></script>
+<script src="js/keyboard.js?v=9"></script>
+<script src="js/overview.js?v=9"></script>
+<script src="js/lighting.js?v=9"></script>
+<script src="js/custom-lighting.js?v=9"></script>
+<script src="js/keymap.js?v=9"></script>
+<script src="js/actuation.js?v=9"></script>
+<script src="js/travel.js?v=9"></script>
+<script src="js/mouse.js?v=9"></script>
+<script src="js/mouse-buttons.js?v=9"></script>
+<script src="js/mouse-lighting.js?v=9"></script>
+<script src="js/backup.js?v=9"></script>
+<script src="js/shell.js?v=9"></script>
+<script src="js/main.js?v=9"></script>
 </body>
 </html>

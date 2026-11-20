@@ -433,3 +433,10 @@ input.ms-color { flex: none; }
   #connectBtn span { display: none; }
   .topbar { gap: 8px; }
 }
+/* mouse cards: title left, one action top-right; every dropdown the same width */
+.ms-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ms-head > div:first-child { flex: 1; min-width: 0; }
+.ms-head > .btn, .ms-actions { flex: none; }
+.ms-actions { display: flex; gap: 8px; }
+.ms-backup { margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--border); }
+#page-mouse .card-body .field-row > select.select, #msKeys select.select { width: 200px; max-width: 60%; flex: none; }
