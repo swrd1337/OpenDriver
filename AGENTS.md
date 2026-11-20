@@ -56,6 +56,17 @@ The full reference is [docs/PROTOCOL.md](docs/PROTOCOL.md). These rules exist be
 - Styling: use the CSS variables in `css/styles.css` (`--background`, `--foreground`, `--muted`, `--border`, `--primary`, `--info`, …). They have light and dark values. Reuse `.card`, `.btn`, `.seg`, `.switch`, `.badge`, `.field` instead of new one-off styles.
 - UI text: plain, short, sentence case. Say what happened ("Fn + C now sends A."), not that "the operation completed".
 
+## Releasing
+
+GitHub Pages lets browsers cache files for about 10 minutes, so a visitor can get the new `index.html` with an old `styles.css` or script.
+When a change touches `css/` or `js/`, **bump the `?v=` number on every asset link in `index.html`** (they all share one number):
+
+```
+sed -i 's/?v=2"/?v=3"/g' index.html
+```
+
+Inline SVG icons also carry `width`/`height` attributes, so they stay small even if the stylesheet arrives late. Keep that for new icons.
+
 ## Docs to keep in sync
 
 - `docs/PROTOCOL.md`: any new command, layer, value meaning or hardware finding (date confirmed findings).
